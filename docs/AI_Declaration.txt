@@ -1,0 +1,75 @@
+============================================================
+           AI USAGE DECLARATION
+============================================================
+
+Name: Mehedin Assah
+Student ID: [Student ID]
+Project: eSIM Travel App - Milestone 2
+Date: April 18, 2026
+
+------------------------------------------------------------
+1. AI TOOLS USED (check all that apply)
+------------------------------------------------------------
+[X] None
+[X] ChatGPT
+[X] GitHub Copilot
+[ ] Google Gemini
+[ ] Claude
+[ ] Cursor
+[ ] Other: ________________
+
+------------------------------------------------------------
+2. PURPOSE OF AI USE (check all that apply)
+------------------------------------------------------------
+[X] Learning/understanding concepts
+[X] Debugging my code
+[X] Generating code snippets
+[ ] Writing text content
+[X] Design/styling ideas
+[ ] Image generation
+[ ] Other: ________________
+
+------------------------------------------------------------
+3. DESCRIPTION OF AI USE
+------------------------------------------------------------
+GitHub Copilot was used as a coding assistant to:
+- Implement MVVM architecture components (ViewModels, Repositories)
+- Generate boilerplate code for Room database entities, DAOs, and migrations
+- Assist with Kotlin syntax and best practices
+- Debug compilation errors related to Gradle, dependencies, and Java compatibility
+- Create UI layouts and fragments
+- Implement form validation and error handling
+- Generate localization strings for multiple languages (English, Spanish, French, German, Japanese, Chinese)
+- Design and implement the Settings and Edit Profile features
+- Set up multi-language locale switching with BaseActivity and LocaleManager
+
+All generated code was reviewed, tested, and modified to fit project requirements and architecture patterns.
+
+------------------------------------------------------------
+4. AI-ASSISTED SECTIONS
+------------------------------------------------------------
+List specific files/sections where AI helped significantly:
+
+File: EditProfileActivity.kt | Section: Full activity implementation with validation
+File: SettingsActivity.kt | Section: Language selection and preference persistence
+File: BaseActivity.kt | Section: Locale management and context attachment
+File: LocaleManager.kt | Section: Language switching utilities
+File: ViewModels.kt | Section: State management and sealed classes
+File: Repositories.kt | Section: Data access patterns and repository methods
+File: AppDatabase.kt | Section: Room database setup and seeding
+File: Multiple layout files | Section: Material Design UI components
+File: values-{language}/strings.xml | Section: Multi-language string resources for 6 languages
+
+------------------------------------------------------------
+5. DECLARATION
+------------------------------------------------------------
+I declare that:
+- [X] This disclosure is complete and accurate
+- [X] I understand all code in my submission
+- [X] I can explain and modify my work if asked
+- [X] I take full responsibility for my submission
+
+Signature: Mehedin Assah
+Date: April 18, 2026
+
+============================================================

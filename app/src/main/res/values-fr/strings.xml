@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Application eSIM de Voyage</string>
+
+    <!-- Login Screen -->
+    <string name="login_title">Bienvenue</string>
+    <string name="email_label">Adresse E-mail</string>
+    <string name="password_label">Mot de passe</string>
+    <string name="login_button">Connexion</string>
+    <string name="forgot_password">Mot de passe oublié?</string>
+    <string name="register_link">Vous n\'avez pas de compte? S\'inscrire</string>
+
+    <!-- Register Screen -->
+    <string name="register_title">Créer un Compte</string>
+    <string name="name_label">Nom Complet</string>
+    <string name="confirm_password_label">Confirmer le Mot de passe</string>
+    <string name="register_button">S\'inscrire</string>
+    <string name="login_link">Vous avez déjà un compte? Se Connecter</string>
+    <string name="terms_agreement">J\'accepte les Conditions d\'utilisation</string>
+
+    <!-- Forgot Password -->
+    <string name="forgot_password_title">Réinitialiser le Mot de passe</string>
+    <string name="reset_email_hint">Entrez votre adresse e-mail enregistrée</string>
+    <string name="send_reset_link">Envoyer le Lien de Réinitialisation</string>
+
+    <!-- Dashboard -->
+    <string name="dashboard_title">Tableau de Bord</string>
+    <string name="active_plans">Plans Actifs</string>
+    <string name="data_remaining">Données Restantes</string>
+    <string name="days_left">Jours Restants</string>
+    <string name="buy_plan">Acheter un Plan</string>
+    <string name="topup">Recharge</string>
+
+    <!-- Storefront -->
+    <string name="storefront_title">Parcourir les Plans</string>
+    <string name="search_plans">Rechercher par pays...</string>
+    <string name="country">Pays</string>
+    <string name="price">Prix</string>
+    <string name="data_amount">Quantité de Données</string>
+    <string name="validity">Validité</string>
+    <string name="select_plan">Sélectionner un Plan</string>
+
+    <!-- Notifications -->
+    <string name="notifications_title">Notifications</string>
+    <string name="no_notifications">Aucune notification</string>
+    <string name="mark_as_read">Marquer comme Lu</string>
+    <string name="clear_all">Effacer Tout</string>
+
+    <!-- Profile -->
+    <string name="profile_title">Profil</string>
+    <string name="edit_profile">Modifier le Profil</string>
+    <string name="purchase_history">Historique des Achats</string>
+    <string name="settings">Paramètres</string>
+    <string name="logout">Déconnexion</string>
+
+    <!-- Edit Profile -->
+    <string name="edit_profile_title">Modifier le Profil</string>
+    <string name="name_hint">Entrez votre nom</string>
+    <string name="email_hint">Entrez votre adresse e-mail</string>
+    <string name="save_profile">Enregistrer le Profil</string>
+    <string name="profile_updated">Profil mis à jour avec succès</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Paramètres</string>
+    <string name="language_label">Langue</string>
+    <string name="notifications_label">Notifications</string>
+    <string name="enable_notifications">Activer les Notifications</string>
+    <string name="data_usage_tracking">Suivi de l\'Utilisation des Données</string>
+    <string name="enable_data_tracking">Activer le Suivi des Données</string>
+    <string name="settings_saved">Paramètres enregistrés avec succès</string>
+
+    <!-- General -->
+    <string name="loading">Chargement...</string>
+    <string name="error">Erreur</string>
+    <string name="success">Succès</string>
+    <string name="cancel">Annuler</string>
+    <string name="back">Retour</string>
+</resources>

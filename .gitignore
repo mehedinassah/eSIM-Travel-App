@@ -1,0 +1,45 @@
+.gradle/
+.idea/
+*.iml
+*.apk
+*.ap_
+*.dex
+bin/
+gen/
+local.properties
+build/
+.DS_Store
+*.class
+*.log
+*.swp
+*.swo
+*~
+.classpath
+.project
+.settings/
+.metadata/
+.vscode/
+out/
+
+# Gradle
+.gradle
+gradle-app.setting
+
+# IDE
+.idea/
+.vscode/
+*.iws
+*.iml
+*.ipr
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build
+build/
+dist/
+out/
+
+# Local configuration file
+local.properties

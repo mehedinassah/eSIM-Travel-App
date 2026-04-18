@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">eSIM トラベルアプリ</string>
+
+    <!-- Login Screen -->
+    <string name="login_title">お帰りなさい</string>
+    <string name="email_label">メールアドレス</string>
+    <string name="password_label">パスワード</string>
+    <string name="login_button">ログイン</string>
+    <string name="forgot_password">パスワードをお忘れですか？</string>
+    <string name="register_link">アカウントがありませんか？登録</string>
+
+    <!-- Register Screen -->
+    <string name="register_title">アカウント作成</string>
+    <string name="name_label">フルネーム</string>
+    <string name="confirm_password_label">パスワードを確認</string>
+    <string name="register_button">登録</string>
+    <string name="login_link">すでにアカウントをお持ちですか？ログイン</string>
+    <string name="terms_agreement">利用規約に同意します</string>
+
+    <!-- Forgot Password -->
+    <string name="forgot_password_title">パスワードをリセット</string>
+    <string name="reset_email_hint">登録済みのメールアドレスを入力</string>
+    <string name="send_reset_link">リセットリンクを送信</string>
+
+    <!-- Dashboard -->
+    <string name="dashboard_title">ダッシュボード</string>
+    <string name="active_plans">アクティブプラン</string>
+    <string name="data_remaining">残りデータ</string>
+    <string name="days_left">残り日数</string>
+    <string name="buy_plan">プランを購入</string>
+    <string name="topup">トップアップ</string>
+
+    <!-- Storefront -->
+    <string name="storefront_title">プランを参照</string>
+    <string name="search_plans">国で検索...</string>
+    <string name="country">国</string>
+    <string name="price">価格</string>
+    <string name="data_amount">データ量</string>
+    <string name="validity">有効性</string>
+    <string name="select_plan">プランを選択</string>
+
+    <!-- Notifications -->
+    <string name="notifications_title">通知</string>
+    <string name="no_notifications">通知はありません</string>
+    <string name="mark_as_read">既読にする</string>
+    <string name="clear_all">すべてクリア</string>
+
+    <!-- Profile -->
+    <string name="profile_title">プロフィール</string>
+    <string name="edit_profile">プロフィールを編集</string>
+    <string name="purchase_history">購入履歴</string>
+    <string name="settings">設定</string>
+    <string name="logout">ログアウト</string>
+
+    <!-- Edit Profile -->
+    <string name="edit_profile_title">プロフィールを編集</string>
+    <string name="name_hint">名前を入力してください</string>
+    <string name="email_hint">メールアドレスを入力してください</string>
+    <string name="save_profile">プロフィールを保存</string>
+    <string name="profile_updated">プロフィールが正常に更新されました</string>
+
+    <!-- Settings -->
+    <string name="settings_title">設定</string>
+    <string name="language_label">言語</string>
+    <string name="notifications_label">通知</string>
+    <string name="enable_notifications">通知を有効にする</string>
+    <string name="data_usage_tracking">データ使用状況の追跡</string>
+    <string name="enable_data_tracking">データ追跡を有効にする</string>
+    <string name="settings_saved">設定が正常に保存されました</string>
+
+    <!-- General -->
+    <string name="loading">読み込み中...</string>
+    <string name="error">エラー</string>
+    <string name="success">成功</string>
+    <string name="cancel">キャンセル</string>
+    <string name="back">戻る</string>
+</resources>
