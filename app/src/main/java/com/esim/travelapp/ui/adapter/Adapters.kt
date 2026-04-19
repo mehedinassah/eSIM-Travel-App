@@ -103,3 +103,50 @@ class NotificationAdapter :
         ) = oldItem == newItem
     }
 }
+
+class PurchaseHistoryAdapter :
+    ListAdapter<com.esim.travelapp.data.local.entity.PurchaseEntity, PurchaseHistoryAdapter.PurchaseViewHolder>(
+        DiffCallback()
+    ) {
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PurchaseViewHolder {
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_purchase_history, parent, false)
+        return PurchaseViewHolder(view)
+    }
+
+    override fun onBindViewHolder(holder: PurchaseViewHolder, position: Int) {
+        holder.bind(getItem(position))
+    }
+
+    class PurchaseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val planNameText: TextView = itemView.findViewById(R.id.planNameText)
+        private val dateText: TextView = itemView.findViewById(R.id.dateText)
+        private val statusText: TextView = itemView.findViewById(R.id.statusText)
+        private val priceText: TextView = itemView.findViewById(R.id.priceText)
+
+        fun bind(purchase: com.esim.travelapp.data.local.entity.PurchaseEntity) {
+            planNameText.text = "Purchase #${purchase.id}"
+            dateText.text = formatDate(purchase.purchaseDate)
+            statusText.text = "Status: ${purchase.status.uppercase()}"
+            priceText.text = "Pending amount"
+        }
+
+        private fun formatDate(timestamp: Long): String {
+            val sdf = java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault())
+            return sdf.format(java.util.Date(timestamp))
+        }
+    }
+
+    class DiffCallback : DiffUtil.ItemCallback<com.esim.travelapp.data.local.entity.PurchaseEntity>() {
+        override fun areItemsTheSame(
+            oldItem: com.esim.travelapp.data.local.entity.PurchaseEntity,
+            newItem: com.esim.travelapp.data.local.entity.PurchaseEntity
+        ) = oldItem.id == newItem.id
+
+        override fun areContentsTheSame(
+            oldItem: com.esim.travelapp.data.local.entity.PurchaseEntity,
+            newItem: com.esim.travelapp.data.local.entity.PurchaseEntity
+        ) = oldItem == newItem
+    }
+}

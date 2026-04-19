@@ -81,3 +81,45 @@ interface NotificationDao {
     @Query("DELETE FROM notifications WHERE userId = :userId")
     suspend fun clearAllNotifications(userId: Int)
 }
+
+@Dao
+interface PaymentDao {
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertPayment(payment: com.esim.travelapp.data.local.entity.PaymentEntity): Long
+
+    @Query("SELECT * FROM payments WHERE id = :paymentId LIMIT 1")
+    suspend fun getPaymentById(paymentId: Int): com.esim.travelapp.data.local.entity.PaymentEntity?
+
+    @Query("SELECT * FROM payments WHERE userId = :userId ORDER BY createdAt DESC")
+    fun getUserPayments(userId: Int): Flow<List<com.esim.travelapp.data.local.entity.PaymentEntity>>
+
+    @Update
+    suspend fun updatePayment(payment: com.esim.travelapp.data.local.entity.PaymentEntity)
+}
+
+@Dao
+interface ESIMActivationDao {
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertActivation(activation: com.esim.travelapp.data.local.entity.ESIMActivationEntity): Long
+
+    @Query("SELECT * FROM esim_activations WHERE purchaseId = :purchaseId LIMIT 1")
+    suspend fun getActivationByPurchaseId(purchaseId: Int): com.esim.travelapp.data.local.entity.ESIMActivationEntity?
+
+    @Query("SELECT * FROM esim_activations WHERE id = :activationId LIMIT 1")
+    suspend fun getActivationById(activationId: Int): com.esim.travelapp.data.local.entity.ESIMActivationEntity?
+
+    @Update
+    suspend fun updateActivation(activation: com.esim.travelapp.data.local.entity.ESIMActivationEntity)
+}
+
+@Dao
+interface DataUsageDao {
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertUsage(usage: com.esim.travelapp.data.local.entity.DataUsageEntity): Long
+
+    @Query("SELECT * FROM data_usage WHERE activationId = :activationId LIMIT 1")
+    suspend fun getUsageByActivationId(activationId: Int): com.esim.travelapp.data.local.entity.DataUsageEntity?
+
+    @Update
+    suspend fun updateUsage(usage: com.esim.travelapp.data.local.entity.DataUsageEntity)
+}

@@ -43,6 +43,30 @@
             android:name=".ui.profile.SettingsActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".ui.purchase.PlanDetailsActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.purchase.PaymentActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.purchase.PaymentConfirmationActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.purchase.PaymentFailureActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.purchase.ESIMActivationActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.profile.PurchaseHistoryActivity"
+            android:exported="false" />
+
     </application>
 
 </manifest>

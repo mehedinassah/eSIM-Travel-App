@@ -75,4 +75,53 @@
     <string name="success">Success</string>
     <string name="cancel">Cancel</string>
     <string name="back">Back</string>
+
+    <!-- Plan Details -->
+    <string name="plan_details_title">Plan Details</string>
+    <string name="purchase_plan">Purchase Plan</string>
+
+    <!-- Payment -->
+    <string name="payment_details">Payment Details</string>
+    <string name="order_summary">Order Summary</string>
+    <string name="plan_label">Plan</string>
+    <string name="card_information">Card Information</string>
+    <string name="card_number_hint">Card Number</string>
+    <string name="expiry_hint">MM/YY</string>
+    <string name="cvv_hint">CVV</string>
+    <string name="cardholder_hint">Cardholder Name</string>
+    <string name="secure_payment">🔒 Your payment is secure</string>
+    <string name="pay_now">Pay Now</string>
+    <string name="fill_all_fields">Please fill all fields</string>
+
+    <!-- Payment Confirmation -->
+    <string name="payment_confirmed">Payment Confirmed!</string>
+    <string name="order_id">Order ID</string>
+    <string name="amount_paid">Amount Paid</string>
+    <string name="esim_preparing">Your eSIM is being prepared. Proceed to activation to get your QR code.</string>
+    <string name="get_esim">Get eSIM</string>
+
+    <!-- Payment Failure -->
+    <string name="payment_failed">Payment Failed</string>
+    <string name="check_payment_details">Please check your payment details and try again.</string>
+    <string name="retry_payment">Retry Payment</string>
+    <string name="go_back">Go Back</string>
+
+    <!-- eSIM Activation -->
+    <string name="esim_activation_title">eSIM Activation</string>
+    <string name="status_label">Status</string>
+    <string name="pending_activation">Pending Activation</string>
+    <string name="status_activated">Status: ✓ Activated</string>
+    <string name="esim_activated_successfully">eSIM Activated Successfully!</string>
+    <string name="status_failed">Status: Failed</string>
+    <string name="confirm_activation">Confirm Activation</string>
+    <string name="back_to_dashboard">Back to Dashboard</string>
+    <string name="scan_qr_code">Scan the QR code with your device to activate the eSIM</string>
+    <string name="installation_steps">Installation Steps</string>
+    <string name="installation_instructions">1. Open your device settings\n2. Go to Cellular or Mobile Network\n3. Select Add Cellular Plan\n4. Scan the QR code above\n5. Follow the activation steps\n6. Your eSIM will be activated</string>
+    <string name="iccid_label">ICCID</string>
+
+    <!-- Purchase History -->
+    <string name="purchase_history_title">Purchase History</string>
+    <string name="no_purchases">No purchases yet</string>
+
 </resources>

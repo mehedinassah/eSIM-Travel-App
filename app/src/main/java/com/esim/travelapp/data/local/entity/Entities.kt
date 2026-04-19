@@ -51,3 +51,44 @@ data class NotificationEntity(
     val isRead: Boolean = false,
     val createdAt: Long = System.currentTimeMillis()
 )
+
+@Entity(tableName = "payments")
+data class PaymentEntity(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+    val userId: Int,
+    val purchaseId: Int,
+    val amount: Double,
+    val paymentMethod: String, // card, wallet, bank
+    val paymentStatus: String = "processing", // processing, completed, failed, refunded
+    val transactionReference: String,
+    val processorTransactionId: String? = null,
+    val cardBrand: String? = null,
+    val lastFourDigits: String? = null,
+    val createdAt: Long = System.currentTimeMillis()
+)
+
+@Entity(tableName = "esim_activations")
+data class ESIMActivationEntity(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+    val purchaseId: Int,
+    val iccid: String,
+    val qrCodeUrl: String? = null,
+    val activationStatus: String = "pending", // pending, activated, failed, expired
+    val activationCode: String? = null,
+    val activationDate: Long? = null,
+    val expiryDate: Long? = null,
+    val createdAt: Long = System.currentTimeMillis()
+)
+
+@Entity(tableName = "data_usage")
+data class DataUsageEntity(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+    val activationId: Int,
+    val dataUsed: Double = 0.0,
+    val dataTotal: Double = 0.0,
+    val dataRemaining: Double = 0.0,
+    val lastUpdated: Long = System.currentTimeMillis()
+)

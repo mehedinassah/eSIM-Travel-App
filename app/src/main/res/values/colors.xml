@@ -15,4 +15,6 @@
     <color name="secondary">#FF03DAC5</color>
     <color name="error">#FFB00020</color>
     <color name="success">#FF4CAF50</color>
+    <color name="green">#FF4CAF50</color>
+    <color name="red">#FFFF5252</color>
 </resources>

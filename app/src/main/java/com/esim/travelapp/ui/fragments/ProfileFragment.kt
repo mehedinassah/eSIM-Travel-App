@@ -47,7 +47,7 @@ class ProfileFragment : Fragment() {
         }
 
         purchaseHistoryButton.setOnClickListener {
-            // Navigate to purchase history
+            startActivity(Intent(requireContext(), com.esim.travelapp.ui.profile.PurchaseHistoryActivity::class.java))
         }
 
         settingsButton.setOnClickListener {

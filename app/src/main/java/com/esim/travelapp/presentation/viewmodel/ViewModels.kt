@@ -109,3 +109,122 @@ class NotificationViewModel(private val notificationRepository: com.esim.travela
 
     fun getUserNotifications(userId: Int) = notificationRepository.getUserNotifications(userId)
 }
+
+class PaymentViewModel(private val paymentRepository: com.esim.travelapp.data.repository.PaymentRepository) : ViewModel() {
+
+    private val _paymentState = MutableLiveData<PaymentState>()
+    val paymentState: LiveData<PaymentState> = _paymentState
+
+    fun processPayment(userId: Int, purchaseId: Int, amount: Double, paymentMethod: String, transactionRef: String) {
+        _paymentState.value = PaymentState.Processing
+        viewModelScope.launch {
+            val result = paymentRepository.createPayment(userId, purchaseId, amount, paymentMethod, transactionRef)
+            result.onSuccess { paymentId ->
+                // Simulate payment processing
+                val success = kotlin.random.Random.nextBoolean()
+                if (success) {
+                    val updateResult = paymentRepository.updatePaymentStatus(paymentId, "completed")
+                    updateResult.onSuccess {
+                        _paymentState.value = PaymentState.Success(paymentId)
+                    }.onFailure { error ->
+                        _paymentState.value = PaymentState.Error(error.message ?: "Failed to update payment status")
+                    }
+                } else {
+                    paymentRepository.updatePaymentStatus(paymentId, "failed")
+                    _paymentState.value = PaymentState.Failed("Payment declined. Please try again.")
+                }
+            }.onFailure { error ->
+                _paymentState.value = PaymentState.Error(error.message ?: "Payment processing failed")
+            }
+        }
+    }
+}
+
+sealed class PaymentState {
+    object Processing : PaymentState()
+    data class Success(val paymentId: Int) : PaymentState()
+    data class Failed(val message: String) : PaymentState()
+    data class Error(val message: String) : PaymentState()
+}
+
+class ESIMActivationViewModel(private val activationRepository: com.esim.travelapp.data.repository.ESIMActivationRepository,
+                              private val dataUsageRepository: com.esim.travelapp.data.repository.DataUsageRepository) : ViewModel() {
+
+    private val _activationState = MutableLiveData<ActivationState>()
+    val activationState: LiveData<ActivationState> = _activationState
+
+    fun createActivation(purchaseId: Int, dataAmount: String) {
+        _activationState.value = ActivationState.Creating
+        viewModelScope.launch {
+            val iccid = "8901${System.currentTimeMillis() % 10000000000}"
+            val qrCode = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=$iccid"
+            
+            val result = activationRepository.createActivation(purchaseId, iccid, qrCode)
+            result.onSuccess { activationId ->
+                // Extract GB value from dataAmount (e.g., "5GB" -> 5.0)
+                val gbs = dataAmount.replace("GB", "").toDoubleOrNull() ?: 1.0
+                dataUsageRepository.createUsage(activationId, gbs).onSuccess {
+                    _activationState.value = ActivationState.Created(activationId, iccid, qrCode)
+                }.onFailure { error ->
+                    _activationState.value = ActivationState.Error(error.message ?: "Failed to create usage data")
+                }
+            }.onFailure { error ->
+                _activationState.value = ActivationState.Error(error.message ?: "Failed to create activation")
+            }
+        }
+    }
+
+    fun activateESIM(activationId: Int) {
+        _activationState.value = ActivationState.Activating
+        viewModelScope.launch {
+            val result = activationRepository.activateESIM(activationId)
+            result.onSuccess {
+                _activationState.value = ActivationState.Activated
+            }.onFailure { error ->
+                _activationState.value = ActivationState.Error(error.message ?: "Activation failed")
+            }
+        }
+    }
+}
+
+sealed class ActivationState {
+    object Creating : ActivationState()
+    object Activating : ActivationState()
+    data class Created(val activationId: Int, val iccid: String, val qrCode: String) : ActivationState()
+    object Activated : ActivationState()
+    data class Error(val message: String) : ActivationState()
+}
+
+class UserProfileViewModel(private val userRepository: com.esim.travelapp.data.repository.UserRepository) : ViewModel() {
+
+    private val _profileState = MutableLiveData<ProfileState>()
+    val profileState: LiveData<ProfileState> = _profileState
+
+    fun updateProfile(userId: Int, name: String, email: String) {
+        _profileState.value = ProfileState.Updating
+        viewModelScope.launch {
+            val result = userRepository.updateUserProfile(userId, name, email)
+            result.onSuccess {
+                _profileState.value = ProfileState.Updated
+            }.onFailure { error ->
+                _profileState.value = ProfileState.Error(error.message ?: "Profile update failed")
+            }
+        }
+    }
+
+    suspend fun getUserProfile(userId: Int): User? {
+        return userRepository.getUserById(userId)?.let {
+            User(
+                id = it.id,
+                name = it.name,
+                email = it.email
+            )
+        }
+    }
+}
+
+sealed class ProfileState {
+    object Updating : ProfileState()
+    object Updated : ProfileState()
+    data class Error(val message: String) : ProfileState()
+}

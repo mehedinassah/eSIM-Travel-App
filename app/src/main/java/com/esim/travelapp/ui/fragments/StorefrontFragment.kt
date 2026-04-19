@@ -1,5 +1,6 @@
 package com.esim.travelapp.ui.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -60,7 +61,15 @@ class StorefrontFragment : Fragment() {
 
     private fun setupRecyclerView() {
         planAdapter = PlanAdapter { plan ->
-            Toast.makeText(requireContext(), "Selected: ${plan.planName}", Toast.LENGTH_SHORT).show()
+            val intent = android.content.Intent(requireContext(), com.esim.travelapp.ui.purchase.PlanDetailsActivity::class.java)
+            intent.putExtra("plan_id", plan.id)
+            intent.putExtra("country", plan.country)
+            intent.putExtra("plan_name", plan.planName)
+            intent.putExtra("price", plan.price)
+            intent.putExtra("data_amount", plan.dataAmount)
+            intent.putExtra("validity_days", plan.validityDays)
+            intent.putExtra("description", plan.description)
+            startActivity(intent)
         }
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = planAdapter

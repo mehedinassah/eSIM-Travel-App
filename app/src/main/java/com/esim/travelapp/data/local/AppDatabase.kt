@@ -8,19 +8,28 @@ import com.esim.travelapp.data.local.dao.ESIMPlanDao
 import com.esim.travelapp.data.local.dao.NotificationDao
 import com.esim.travelapp.data.local.dao.PurchaseDao
 import com.esim.travelapp.data.local.dao.UserDao
+import com.esim.travelapp.data.local.dao.PaymentDao
+import com.esim.travelapp.data.local.dao.ESIMActivationDao
+import com.esim.travelapp.data.local.dao.DataUsageDao
 import com.esim.travelapp.data.local.entity.ESIMPlanEntity
 import com.esim.travelapp.data.local.entity.NotificationEntity
 import com.esim.travelapp.data.local.entity.PurchaseEntity
 import com.esim.travelapp.data.local.entity.UserEntity
+import com.esim.travelapp.data.local.entity.PaymentEntity
+import com.esim.travelapp.data.local.entity.ESIMActivationEntity
+import com.esim.travelapp.data.local.entity.DataUsageEntity
 
 @Database(
     entities = [
         UserEntity::class,
         ESIMPlanEntity::class,
         PurchaseEntity::class,
-        NotificationEntity::class
+        NotificationEntity::class,
+        PaymentEntity::class,
+        ESIMActivationEntity::class,
+        DataUsageEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -28,6 +37,9 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun esimPlanDao(): ESIMPlanDao
     abstract fun purchaseDao(): PurchaseDao
     abstract fun notificationDao(): NotificationDao
+    abstract fun paymentDao(): PaymentDao
+    abstract fun esimActivationDao(): ESIMActivationDao
+    abstract fun dataUsageDao(): DataUsageDao
 
     companion object {
         @Volatile
@@ -39,7 +51,7 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "esim_travel_app.db"
-                ).build().also { database ->
+                ).fallbackToDestructiveMigration().build().also { database ->
                     instance = database
                     // Seed data on first database creation
                     seedDatabase(database)

@@ -109,3 +109,153 @@ class NotificationRepository(private val notificationDao: com.esim.travelapp.dat
         notificationDao.insertNotification(notification)
     }
 }
+
+class PaymentRepository(private val paymentDao: com.esim.travelapp.data.local.dao.PaymentDao) {
+    
+    suspend fun createPayment(
+        userId: Int,
+        purchaseId: Int,
+        amount: Double,
+        paymentMethod: String,
+        transactionReference: String
+    ): Result<Int> {
+        return try {
+            val payment = com.esim.travelapp.data.local.entity.PaymentEntity(
+                userId = userId,
+                purchaseId = purchaseId,
+                amount = amount,
+                paymentMethod = paymentMethod,
+                transactionReference = transactionReference
+            )
+            val paymentId = paymentDao.insertPayment(payment).toInt()
+            Result.success(paymentId)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+    
+    suspend fun getPaymentById(paymentId: Int) = paymentDao.getPaymentById(paymentId)
+    
+    suspend fun updatePaymentStatus(paymentId: Int, status: String): Result<Unit> {
+        return try {
+            val payment = paymentDao.getPaymentById(paymentId)
+            if (payment != null) {
+                paymentDao.updatePayment(payment.copy(paymentStatus = status))
+                Result.success(Unit)
+            } else {
+                Result.failure(Exception("Payment not found"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+}
+
+class ESIMActivationRepository(private val activationDao: com.esim.travelapp.data.local.dao.ESIMActivationDao) {
+    
+    suspend fun createActivation(
+        purchaseId: Int,
+        iccid: String,
+        qrCodeUrl: String? = null
+    ): Result<Int> {
+        return try {
+            val activation = com.esim.travelapp.data.local.entity.ESIMActivationEntity(
+                purchaseId = purchaseId,
+                iccid = iccid,
+                qrCodeUrl = qrCodeUrl
+            )
+            val activationId = activationDao.insertActivation(activation).toInt()
+            Result.success(activationId)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+    
+    suspend fun getActivationByPurchaseId(purchaseId: Int) = 
+        activationDao.getActivationByPurchaseId(purchaseId)
+    
+    suspend fun activateESIM(activationId: Int): Result<Unit> {
+        return try {
+            val activation = activationDao.getActivationById(activationId)
+            if (activation != null) {
+                activationDao.updateActivation(
+                    activation.copy(
+                        activationStatus = "activated",
+                        activationDate = System.currentTimeMillis()
+                    )
+                )
+                Result.success(Unit)
+            } else {
+                Result.failure(Exception("Activation not found"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+}
+
+class DataUsageRepository(private val dataUsageDao: com.esim.travelapp.data.local.dao.DataUsageDao) {
+    
+    suspend fun createUsage(activationId: Int, dataTotal: Double): Result<Int> {
+        return try {
+            val usage = com.esim.travelapp.data.local.entity.DataUsageEntity(
+                activationId = activationId,
+                dataTotal = dataTotal,
+                dataRemaining = dataTotal
+            )
+            val usageId = dataUsageDao.insertUsage(usage).toInt()
+            Result.success(usageId)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+    
+    suspend fun getUsageByActivationId(activationId: Int) = 
+        dataUsageDao.getUsageByActivationId(activationId)
+    
+    suspend fun updateDataUsage(activationId: Int, dataUsed: Double): Result<Unit> {
+        return try {
+            val usage = dataUsageDao.getUsageByActivationId(activationId)
+            if (usage != null) {
+                val dataRemaining = usage.dataTotal - dataUsed
+                dataUsageDao.updateUsage(
+                    usage.copy(
+                        dataUsed = dataUsed,
+                        dataRemaining = dataRemaining,
+                        lastUpdated = System.currentTimeMillis()
+                    )
+                )
+                Result.success(Unit)
+            } else {
+                Result.failure(Exception("Data usage not found"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+}
+
+class UserRepository(private val userDao: UserDao) {
+    
+    suspend fun updateUserProfile(userId: Int, name: String, email: String): Result<Unit> {
+        return try {
+            val user = userDao.getUserById(userId)
+            if (user != null) {
+                userDao.updateUser(
+                    user.copy(
+                        name = name,
+                        email = email,
+                        updatedAt = System.currentTimeMillis()
+                    )
+                )
+                Result.success(Unit)
+            } else {
+                Result.failure(Exception("User not found"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+    
+    suspend fun getUserById(userId: Int) = userDao.getUserById(userId)
+}

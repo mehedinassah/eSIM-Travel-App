@@ -53,11 +53,30 @@ class DashboardFragment : Fragment() {
         val buyPlanButton: Button = view.findViewById(R.id.buyPlanButton)
         val topUpButton: Button = view.findViewById(R.id.topUpButton)
 
-        dataRemainingText.text = "5 GB / 10 GB"
-        daysLeftText.text = "15 days left"
+        // Observe purchases
+        purchaseViewModel.getUserPurchases(currentUserId).asLiveData().observe(viewLifecycleOwner) { purchases ->
+            if (purchases.isNotEmpty()) {
+                val latestPurchase = purchases.last()
+                val statusText = when (latestPurchase.status) {
+                    "pending" -> "Pending"
+                    "completed" -> "Active"
+                    else -> "Inactive"
+                }
+                dataRemainingText.text = "Status: $statusText"
+                
+                // Calculate days remaining from purchase
+                val createdAt = latestPurchase.createdAt
+                val now = System.currentTimeMillis()
+                val daysElapsed = (now - createdAt) / (1000 * 60 * 60 * 24)
+                val daysRemaining = 30 - daysElapsed // Assume 30-day plans
+                daysLeftText.text = if (daysRemaining > 0) "$daysRemaining days left" else "Expired"
+            } else {
+                dataRemainingText.text = "No active plan"
+                daysLeftText.text = "Purchase a plan to get started"
+            }
+        }
 
         buyPlanButton.setOnClickListener {
-            // Navigate to storefront
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(R.id.fragmentContainer, StorefrontFragment())
                 .addToBackStack(null)
@@ -65,19 +84,10 @@ class DashboardFragment : Fragment() {
         }
 
         topUpButton.setOnClickListener {
-            // Navigate to storefront filtered for top-up
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(R.id.fragmentContainer, StorefrontFragment())
                 .addToBackStack(null)
                 .commit()
-        }
-
-        // Observe purchases
-        purchaseViewModel.getUserPurchases(currentUserId).asLiveData().observe(viewLifecycleOwner) { purchases: List<PurchaseEntity> ->
-            if (purchases.isNotEmpty()) {
-                val latestPurchase = purchases.last()
-                dataRemainingText.text = "Active Plan - ${latestPurchase.status}"
-            }
         }
     }
 }

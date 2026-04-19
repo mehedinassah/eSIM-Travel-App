@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="@dimen/spacing_16"
+    android:background="@color/light_gray">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="@dimen/spacing_24">
+
+        <ImageView
+            android:id="@+id/backButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_back"
+            android:contentDescription="Back" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="eSIM Activation"
+            android:textSize="@dimen/text_size_20"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:textColor="@color/primary" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_menu"
+            android:contentDescription="Menu" />
+    </LinearLayout>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/spacing_16"
+        android:elevation="@dimen/spacing_8">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_16"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/planText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_18"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:layout_marginBottom="@dimen/spacing_16" />
+
+            <TextView
+                android:id="@+id/statusText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_16"
+                android:gravity="center"
+                android:textColor="@color/primary"
+                android:layout_marginBottom="@dimen/spacing_16" />
+
+            <ImageView
+                android:id="@+id/qrCodeImageView"
+                android:layout_width="300dp"
+                android:layout_height="300dp"
+                android:scaleType="centerInside"
+                android:layout_marginBottom="@dimen/spacing_16" />
+
+            <TextView
+                android:id="@+id/iccidText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_14"
+                android:gravity="center"
+                android:layout_marginBottom="@dimen/spacing_16" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Scan the QR code with your device to activate the eSIM"
+                android:textSize="@dimen/text_size_14"
+                android:gravity="center" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginBottom="@dimen/spacing_16">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Installation Steps"
+                android:textSize="@dimen/text_size_16"
+                android:textStyle="bold"
+                android:layout_marginBottom="@dimen/spacing_12" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="1. Open your device settings\n2. Go to Cellular or Mobile Network\n3. Select Add Cellular Plan\n4. Scan the QR code above\n5. Follow the activation steps\n6. Your eSIM will be activated"
+                android:textSize="@dimen/text_size_14"
+                android:layout_marginBottom="@dimen/spacing_16" />
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/activateButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Confirm Activation"
+            android:textSize="@dimen/text_size_18"
+            android:padding="@dimen/spacing_16"
+            android:background="@color/primary"
+            android:textColor="@color/white"
+            android:layout_marginBottom="@dimen/spacing_12" />
+
+        <Button
+            android:id="@+id/backToDashboardButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Back to Dashboard"
+            android:textSize="@dimen/text_size_18"
+            android:padding="@dimen/spacing_16"
+            android:background="@color/light_gray"
+            android:textColor="@color/primary" />
+    </LinearLayout>
+
+</LinearLayout>
