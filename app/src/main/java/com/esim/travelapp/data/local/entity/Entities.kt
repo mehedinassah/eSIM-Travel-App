@@ -92,3 +92,91 @@ data class DataUsageEntity(
     val dataRemaining: Double = 0.0,
     val lastUpdated: Long = System.currentTimeMillis()
 )
+
+// Wishlist/Favorites
+@Entity(tableName = "wishlist")
+data class WishlistEntity(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+    val userId: Int,
+    val planId: Int,
+    val addedAt: Long = System.currentTimeMillis()
+)
+
+// User Location
+@Entity(tableName = "user_location")
+data class UserLocationEntity(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+    val userId: Int,
+    val latitude: Double,
+    val longitude: Double,
+    val country: String,
+    val city: String,
+    val lastUpdated: Long = System.currentTimeMillis()
+)
+
+// Analytics Events
+@Entity(tableName = "analytics_events")
+data class AnalyticsEventEntity(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+    val userId: Int,
+    val eventName: String,
+    val eventData: String, // JSON string
+    val timestamp: Long = System.currentTimeMillis()
+)
+
+// Support Tickets
+@Entity(tableName = "support_tickets")
+data class SupportTicketEntity(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+    val userId: Int,
+    val subject: String,
+    val message: String,
+    val status: String = "open", // open, in_progress, resolved, closed
+    val priority: String = "normal", // low, normal, high
+    val createdAt: Long = System.currentTimeMillis(),
+    val updatedAt: Long = System.currentTimeMillis()
+)
+
+// Support Messages/Chat
+@Entity(tableName = "support_messages")
+data class SupportMessageEntity(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+    val ticketId: Int,
+    val senderId: Int, // userId or support agent id
+    val message: String,
+    val isUserMessage: Boolean = true,
+    val timestamp: Long = System.currentTimeMillis()
+)
+
+// Referrals
+@Entity(tableName = "referrals")
+data class ReferralEntity(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+    val referrerId: Int,
+    val referredUserId: Int? = null,
+    val referralCode: String,
+    val referralLink: String,
+    val status: String = "pending", // pending, claimed, expired
+    val discount: Double = 10.0, // discount percentage
+    val createdAt: Long = System.currentTimeMillis(),
+    val claimedAt: Long? = null
+)
+
+// Auto Topup/Renewal
+@Entity(tableName = "auto_renewal")
+data class AutoRenewalEntity(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+    val userId: Int,
+    val planId: Int,
+    val isEnabled: Boolean = false,
+    val renewalThreshold: Double = 10.0, // renew when data % falls below this
+    val lastRenewalDate: Long? = null,
+    val createdAt: Long = System.currentTimeMillis()
+)

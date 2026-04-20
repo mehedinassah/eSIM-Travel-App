@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "832560062891",
+    "project_id": "esim-travel-app-d185b",
+    "storage_bucket": "esim-travel-app-d185b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:832560062891:android:67f17481a4dd6581de32ee",
+        "android_client_info": {
+          "package_name": "com.esim.travelapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAl4DPV6PPgibCIO0VLP-_-bNkoaSSAL3k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

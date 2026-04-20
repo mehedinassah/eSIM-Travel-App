@@ -10,6 +10,12 @@ import com.esim.travelapp.data.repository.PaymentRepository
 import com.esim.travelapp.data.repository.ESIMActivationRepository
 import com.esim.travelapp.data.repository.DataUsageRepository
 import com.esim.travelapp.data.repository.UserRepository
+import com.esim.travelapp.data.repository.WishlistRepository
+import com.esim.travelapp.data.repository.LocationRepository
+import com.esim.travelapp.data.repository.AnalyticsRepository
+import com.esim.travelapp.data.repository.SupportRepository
+import com.esim.travelapp.data.repository.ReferralRepository
+import com.esim.travelapp.data.repository.AutoRenewalRepository
 
 class ViewModelFactory(
     private val authRepository: AuthRepository? = null,
@@ -19,7 +25,13 @@ class ViewModelFactory(
     private val paymentRepository: PaymentRepository? = null,
     private val activationRepository: ESIMActivationRepository? = null,
     private val dataUsageRepository: DataUsageRepository? = null,
-    private val userRepository: UserRepository? = null
+    private val userRepository: UserRepository? = null,
+    private val wishlistRepository: WishlistRepository? = null,
+    private val locationRepository: LocationRepository? = null,
+    private val analyticsRepository: AnalyticsRepository? = null,
+    private val supportRepository: SupportRepository? = null,
+    private val referralRepository: ReferralRepository? = null,
+    private val autoRenewalRepository: AutoRenewalRepository? = null
 ) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -38,6 +50,16 @@ class ViewModelFactory(
                 ESIMActivationViewModel(activationRepository!!, dataUsageRepository!!) as T
             modelClass.isAssignableFrom(UserProfileViewModel::class.java) ->
                 UserProfileViewModel(userRepository!!) as T
+            modelClass.isAssignableFrom(WishlistViewModel::class.java) ->
+                WishlistViewModel(wishlistRepository!!) as T
+            modelClass.isAssignableFrom(LocationViewModel::class.java) ->
+                LocationViewModel(locationRepository!!) as T
+            modelClass.isAssignableFrom(SupportViewModel::class.java) ->
+                SupportViewModel(supportRepository!!) as T
+            modelClass.isAssignableFrom(ReferralViewModel::class.java) ->
+                ReferralViewModel(referralRepository!!) as T
+            modelClass.isAssignableFrom(AutoRenewalViewModel::class.java) ->
+                AutoRenewalViewModel(autoRenewalRepository!!) as T
             else -> throw IllegalArgumentException("Unknown ViewModel class")
         }
     }

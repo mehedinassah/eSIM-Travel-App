@@ -83,6 +83,39 @@
         android:textColor="@color/white" />
 
     <Button
+        android:id="@+id/supportButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Support &amp; Help"
+        android:textSize="@dimen/text_size_16"
+        android:padding="@dimen/spacing_12"
+        android:layout_marginBottom="@dimen/spacing_12"
+        android:background="@color/primary"
+        android:textColor="@color/white" />
+
+    <Button
+        android:id="@+id/referralButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Referral Program"
+        android:textSize="@dimen/text_size_16"
+        android:padding="@dimen/spacing_12"
+        android:layout_marginBottom="@dimen/spacing_12"
+        android:background="@color/primary"
+        android:textColor="@color/white" />
+
+    <Button
+        android:id="@+id/autoRenewalButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Auto Renewal Settings"
+        android:textSize="@dimen/text_size_16"
+        android:padding="@dimen/spacing_12"
+        android:layout_marginBottom="@dimen/spacing_12"
+        android:background="@color/primary"
+        android:textColor="@color/white" />
+
+    <Button
         android:id="@+id/logoutButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

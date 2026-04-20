@@ -24,8 +24,7 @@ class NotificationsFragment : Fragment() {
 
     private lateinit var notificationViewModel: NotificationViewModel
     private lateinit var recyclerView: RecyclerView
-    private lateinit var emptyText: TextView
-    private lateinit var clearAllButton: Button
+    private lateinit var emptyLayout: android.widget.LinearLayout
     private lateinit var notificationAdapter: NotificationAdapter
     private var currentUserId: Int = 0
 
@@ -34,7 +33,7 @@ class NotificationsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_notifications, container, false)
+        return inflater.inflate(R.layout.fragment_notifications_professional, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -50,12 +49,7 @@ class NotificationsFragment : Fragment() {
 
     private fun initializeViews(view: View) {
         recyclerView = view.findViewById(R.id.notificationsRecyclerView)
-        emptyText = view.findViewById(R.id.emptyText)
-        clearAllButton = view.findViewById(R.id.clearAllButton)
-
-        clearAllButton.setOnClickListener {
-            Toast.makeText(requireContext(), "Notifications cleared", Toast.LENGTH_SHORT).show()
-        }
+        emptyLayout = view.findViewById(R.id.emptyNotificationsLayout)
     }
 
     private fun setupViewModel() {
@@ -74,10 +68,10 @@ class NotificationsFragment : Fragment() {
     private fun loadNotifications() {
         notificationViewModel.getUserNotifications(currentUserId).asLiveData().observe(viewLifecycleOwner) { notifications ->
             if (notifications.isEmpty()) {
-                emptyText.visibility = View.VISIBLE
+                emptyLayout.visibility = View.VISIBLE
                 recyclerView.visibility = View.GONE
             } else {
-                emptyText.visibility = View.GONE
+                emptyLayout.visibility = View.GONE
                 recyclerView.visibility = View.VISIBLE
                 notificationAdapter.submitList(notifications)
             }

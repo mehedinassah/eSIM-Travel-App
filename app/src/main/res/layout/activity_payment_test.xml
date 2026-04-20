@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Payment Flow Testing"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@color/primary"
+        android:layout_marginBottom="16dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Test Card Numbers:"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="4dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Visa: 4242 4242 4242 4242\nMastercard: 5555 5555 5555 4444\nAmex: 3782 822463 10005\nDeclined: 4000 0000 0000 0002"
+        android:textSize="12sp"
+        android:textColor="@color/gray_600"
+        android:layout_marginBottom="16dp" />
+
+    <EditText
+        android:id="@+id/cardNumberInput"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="Card Number (16 digits)"
+        android:inputType="number"
+        android:padding="12dp"
+        android:background="@drawable/rounded_edittext_bg"
+        android:layout_marginBottom="12dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="12dp">
+
+        <EditText
+            android:id="@+id/expiryMonthInput"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:hint="MM"
+            android:inputType="number"
+            android:padding="12dp"
+            android:background="@drawable/rounded_edittext_bg"
+            android:layout_marginEnd="8dp" />
+
+        <EditText
+            android:id="@+id/expiryYearInput"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:hint="YY"
+            android:inputType="number"
+            android:padding="12dp"
+            android:background="@drawable/rounded_edittext_bg"
+            android:layout_marginEnd="8dp" />
+
+        <EditText
+            android:id="@+id/cvcInput"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:hint="CVC"
+            android:inputType="number"
+            android:padding="12dp"
+            android:background="@drawable/rounded_edittext_bg" />
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/amountInput"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="Amount ($)"
+        android:inputType="numberDecimal"
+        android:padding="12dp"
+        android:background="@drawable/rounded_edittext_bg"
+        android:layout_marginBottom="16dp" />
+
+    <Button
+        android:id="@+id/testCardPaymentButton"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="Test Card Payment"
+        android:textColor="@color/white"
+        android:background="@drawable/button_primary_bg"
+        android:layout_marginBottom="8dp" />
+
+    <Button
+        android:id="@+id/testGooglePayButton"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="Test Google Pay"
+        android:textColor="@color/primary"
+        android:background="@drawable/button_outline_bg"
+        android:layout_marginBottom="8dp" />
+
+    <Button
+        android:id="@+id/testBankTransferButton"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="Test Bank Transfer"
+        android:textColor="@color/primary"
+        android:background="@drawable/button_outline_bg"
+        android:layout_marginBottom="8dp" />
+
+    <Button
+        android:id="@+id/testDeclinedCardButton"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="Test Declined Card (4000 0000 0000 0002)"
+        android:textColor="@color/error"
+        android:background="@drawable/button_error_outline_bg"
+        android:layout_marginBottom="16dp" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/statusText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Ready to test"
+            android:textSize="14sp"
+            android:padding="12dp"
+            android:background="@color/gray_50"
+            android:textColor="@color/gray_900" />
+    </ScrollView>
+</LinearLayout>

@@ -24,7 +24,7 @@ class ProfileFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_profile, container, false)
+        return inflater.inflate(R.layout.fragment_profile_professional, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -32,25 +32,45 @@ class ProfileFragment : Fragment() {
 
         currentUserId = PreferenceManager.getUserId(requireContext())
 
-        val userNameText: TextView = view.findViewById(R.id.userNameText)
-        val userEmailText: TextView = view.findViewById(R.id.userEmailText)
-        val editProfileButton: Button = view.findViewById(R.id.editProfileButton)
-        val purchaseHistoryButton: Button = view.findViewById(R.id.purchaseHistoryButton)
-        val settingsButton: Button = view.findViewById(R.id.settingsButton)
+        // Profile header info
+        val profileUserName: TextView = view.findViewById(R.id.profileUserName)
+        val profileUserEmail: TextView = view.findViewById(R.id.profileUserEmail)
+        val profileActivePlans: TextView = view.findViewById(R.id.profileActivePlans)
+        val profileTotalSpent: TextView = view.findViewById(R.id.profileTotalSpent)
+        val profileCountriesVisited: TextView = view.findViewById(R.id.profileCountriesVisited)
+
+        profileUserName.text = PreferenceManager.getUserName(requireContext())
+        profileUserEmail.text = PreferenceManager.getUserEmail(requireContext())
+        // TODO: Load actual stats from database
+        profileActivePlans.text = "0"
+        profileTotalSpent.text = "$0"
+        profileCountriesVisited.text = "0"
+
+        // Menu options
+        val wishlistMenu: LinearLayout = view.findViewById(R.id.wishlistMenuOption)
+        val referralMenu: LinearLayout = view.findViewById(R.id.referralMenuOption)
+        val autoRenewalMenu: LinearLayout = view.findViewById(R.id.autoRenewalMenuOption)
+        val supportMenu: LinearLayout = view.findViewById(R.id.supportMenuOption)
+        val settingsMenu: LinearLayout = view.findViewById(R.id.settingsMenuOption)
         val logoutButton: Button = view.findViewById(R.id.logoutButton)
 
-        userNameText.text = PreferenceManager.getUserName(requireContext())
-        userEmailText.text = PreferenceManager.getUserEmail(requireContext())
-
-        editProfileButton.setOnClickListener {
-            startActivity(Intent(requireContext(), EditProfileActivity::class.java))
+        wishlistMenu.setOnClickListener {
+            // TODO: Navigate to wishlist
         }
 
-        purchaseHistoryButton.setOnClickListener {
-            startActivity(Intent(requireContext(), com.esim.travelapp.ui.profile.PurchaseHistoryActivity::class.java))
+        referralMenu.setOnClickListener {
+            startActivity(Intent(requireContext(), com.esim.travelapp.ui.profile.ReferralActivity::class.java))
         }
 
-        settingsButton.setOnClickListener {
+        autoRenewalMenu.setOnClickListener {
+            startActivity(Intent(requireContext(), com.esim.travelapp.ui.profile.AutoRenewalActivity::class.java))
+        }
+
+        supportMenu.setOnClickListener {
+            startActivity(Intent(requireContext(), com.esim.travelapp.ui.support.SupportActivity::class.java))
+        }
+
+        settingsMenu.setOnClickListener {
             startActivity(Intent(requireContext(), SettingsActivity::class.java))
         }
 
@@ -63,10 +83,10 @@ class ProfileFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        // Refresh user data when returning from edit profile
-        val userNameText: TextView? = view?.findViewById(R.id.userNameText)
-        val userEmailText: TextView? = view?.findViewById(R.id.userEmailText)
-        userNameText?.text = PreferenceManager.getUserName(requireContext())
-        userEmailText?.text = PreferenceManager.getUserEmail(requireContext())
+        // Refresh user data when returning
+        val profileUserName: TextView? = view?.findViewById(R.id.profileUserName)
+        val profileUserEmail: TextView? = view?.findViewById(R.id.profileUserEmail)
+        profileUserName?.text = PreferenceManager.getUserName(requireContext())
+        profileUserEmail?.text = PreferenceManager.getUserEmail(requireContext())
     }
 }

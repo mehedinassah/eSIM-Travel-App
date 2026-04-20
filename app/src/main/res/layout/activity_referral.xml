@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Referral Program"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@android:color/darker_gray"
+        android:padding="12dp"
+        android:layout_marginBottom="16dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Your Referral Code"
+            android:textSize="14sp"
+            android:layout_marginBottom="8dp" />
+        <TextView
+            android:id="@+id/referralCodeTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Code: Generate a code"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+        <TextView
+            android:id="@+id/referralLinkTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Link: Click Generate Code"
+            android:textSize="12sp"
+            android:layout_marginBottom="8dp" />
+        <Button
+            android:id="@+id/generateCodeButton"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="Generate Code"
+            android:layout_marginBottom="8dp" />
+        <Button
+            android:id="@+id/copyCodeButton"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="Copy Code" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginBottom="16dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Claim Referral"
+            android:textSize="14sp"
+            android:layout_marginBottom="8dp" />
+        <EditText
+            android:id="@+id/claimReferralInput"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="Enter referral code"
+            android:padding="12dp"
+            android:layout_marginBottom="8dp" />
+        <Button
+            android:id="@+id/claimButton"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="Claim Referral" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/benefitsTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Total Benefits: $0.0"
+        android:textSize="14sp"
+        android:layout_marginBottom="16dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Your Referrals"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="12dp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/referralsRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+</LinearLayout>

@@ -1,20 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Primary Colors (Professional Blue) -->
+    <color name="primary">#FF0066CC</color>
+    <color name="primary_dark">#FF0052A3</color>
+    <color name="primary_light">#FF3385FF</color>
+    
+    <!-- Secondary Colors (Accent Green) -->
+    <color name="secondary">#FF00CC66</color>
+    <color name="secondary_dark">#FF009944</color>
+    <color name="secondary_light">#FF33DD88</color>
+    
+    <!-- Grays (Neutrals) -->
+    <color name="white">#FFFFFFFF</color>
+    <color name="black">#FF000000</color>
+    <color name="gray_light">#FFF8F9FA</color>
+    <color name="gray_50">#FFFAFBFC</color>
+    <color name="gray_100">#FFF3F4F6</color>
+    <color name="gray_200">#FFE5E7EB</color>
+    <color name="gray_300">#FFD1D5DB</color>
+    <color name="gray_400">#FF9CA3AF</color>
+    <color name="gray_500">#FF6B7280</color>
+    <color name="gray_600">#FF4B5563</color>
+    <color name="gray_700">#FF374151</color>
+    <color name="gray_800">#FF1F2937</color>
+    <color name="gray_900">#FF111827</color>
+    
+    <!-- Status Colors -->
+    <color name="error">#FFDC2626</color>
+    <color name="error_light">#FFFECACA</color>
+    <color name="success">#FF16A34A</color>
+    <color name="success_light">#FFDBEAFE</color>
+    <color name="warning">#FFEA580C</color>
+    <color name="warning_light">#FFFED7AA</color>
+    <color name="info">#FF0284C7</color>
+    <color name="info_light">#FFCFFAFE</color>
+    
+    <!-- Legacy colors (kept for compatibility) -->
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
     <color name="light_gray">#FFF5F5F5</color>
     <color name="gray">#FF9E9E9E</color>
     <color name="dark_gray">#FF424242</color>
-    <color name="primary">#FF6200EE</color>
-    <color name="primary_variant">#FF3700B3</color>
-    <color name="secondary">#FF03DAC5</color>
-    <color name="error">#FFB00020</color>
-    <color name="success">#FF4CAF50</color>
     <color name="green">#FF4CAF50</color>
     <color name="red">#FFFF5252</color>
 </resources>

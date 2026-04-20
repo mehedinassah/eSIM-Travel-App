@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
+    id 'com.google.gms.google-services'
 }
 
 android {
@@ -16,6 +17,9 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        
+        // Stripe API Key - Replace with your actual publishable key from https://dashboard.stripe.com/apikeys
+        buildConfigField "String", "STRIPE_PUBLISHABLE_KEY", "\"pk_test_51TODP1Q3VmUV0mwZaedKKb5ajRQIoYUJz7Yk1eqntRD4OToGrTODnOpBastyNGZ2jatOE2Jkk7jHQWPbrUZSlxNo00sQJcWsKe\""
     }
 
     buildTypes {
@@ -36,6 +40,11 @@ android {
     buildFeatures {
         viewBinding true
         dataBinding true
+        buildConfig true
+    }
+
+    lintOptions {
+        disable 'MissingTranslation', 'ExtraTranslation', 'RiskyLibrary'
     }
 }
 
@@ -84,8 +93,41 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.15.1'
     kapt 'com.github.bumptech.glide:compiler:4.15.1'
 
+    // Location Services
+    implementation 'com.google.android.gms:play-services-location:21.0.1'
+
+    // Firebase
+    implementation platform('com.google.firebase:firebase-bom:32.7.0')
+    implementation 'com.google.firebase:firebase-messaging-ktx'
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+
+    // Firebase Authentication
+    implementation 'com.google.firebase:firebase-auth-ktx'
+
+    // Stripe for Payments
+    implementation 'com.stripe:stripe-android:20.29.0'
+
+    // WorkManager for background tasks
+    implementation 'androidx.work:work-runtime-ktx:2.8.1'
+
+    // Permissions Handler
+    implementation 'com.google.accompanist:accompanist-permissions:0.33.2-alpha'
+
     // Testing
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+
+
+    // Firebase BOM (Billing of Materials) - manages all Firebase versions
+    implementation 'com.google.firebase:firebase-bom:32.7.0'
+
+    // Firebase services (no need to specify versions, BOM manages them)
+    implementation 'com.google.firebase:firebase-messaging-ktx'
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation 'com.google.firebase:firebase-auth-ktx'
+    implementation 'com.google.firebase:firebase-database-ktx'
+    implementation 'com.google.firebase:firebase-firestore-ktx'
+    implementation 'com.google.firebase:firebase-storage-ktx'
+
 }

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:cardview="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    cardview:cardCornerRadius="12dp"
+    cardview:cardElevation="2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:background="@color/white">
+
+        <!-- Icon/Avatar -->
+        <TextView
+            android:id="@+id/notificationIcon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:textSize="28sp"
+            android:gravity="center"
+            android:background="@color/gray_100"
+            android:layout_marginEnd="12dp"
+            android:layout_gravity="center_vertical" />
+
+        <!-- Content -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="4dp">
+
+                <TextView
+                    android:id="@+id/notificationTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Plan Activated"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/gray_900" />
+
+                <TextView
+                    android:id="@+id/notificationType"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Plan"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    android:background="@drawable/notification_badge_bg"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
+                    android:paddingTop="2dp"
+                    android:paddingBottom="2dp"
+                    android:layout_marginStart="8dp" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/notificationMessage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Your USA 5GB plan is now active"
+                android:textSize="13sp"
+                android:textColor="@color/gray_600"
+                android:layout_marginBottom="4dp" />
+
+            <TextView
+                android:id="@+id/notificationTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2 hours ago"
+                android:textSize="11sp"
+                android:textColor="@color/gray_400" />
+        </LinearLayout>
+
+        <!-- Action -->
+        <Button
+            android:id="@+id/notificationAction"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:text="→"
+            android:textSize="18sp"
+            android:background="@drawable/button_outline_bg"
+            android:textColor="@color/primary"
+            android:layout_marginStart="8dp"
+            android:layout_gravity="center_vertical" />
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

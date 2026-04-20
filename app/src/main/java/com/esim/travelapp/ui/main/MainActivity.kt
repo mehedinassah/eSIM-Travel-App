@@ -1,16 +1,18 @@
 package com.esim.travelapp.ui.main
 
-import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.esim.travelapp.R
 import com.esim.travelapp.ui.BaseActivity
-import com.esim.travelapp.ui.auth.LoginActivity
 import com.esim.travelapp.ui.fragments.DashboardFragment
 import com.esim.travelapp.ui.fragments.NotificationsFragment
 import com.esim.travelapp.ui.fragments.ProfileFragment
-import com.esim.travelapp.ui.fragments.StorefrontFragment
+import com.esim.travelapp.ui.fragments.StorefrontEnhancedFragment
+import com.google.firebase.FirebaseApp
+import com.google.firebase.messaging.FirebaseMessaging
+
 
 class MainActivity : BaseActivity() {
 
@@ -19,12 +21,25 @@ class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        
+        // Initialize Firebase
+        FirebaseApp.initializeApp(this)
+        
+        // Get FCM Token
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.w("FCM", "getInstanceId failed", task.exception)
+                return@addOnCompleteListener
+            }
+            val token = task.result
+            Log.d("FCM", "FCM Token: $token")
+        }
 
         bottomNavigation = findViewById(R.id.bottomNavigation)
-        bottomNavigation.setOnNavigationItemSelectedListener { item ->
+        bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_dashboard -> loadFragment(DashboardFragment())
-                R.id.nav_storefront -> loadFragment(StorefrontFragment())
+                R.id.nav_storefront -> loadFragment(StorefrontEnhancedFragment())
                 R.id.nav_notifications -> loadFragment(NotificationsFragment())
                 R.id.nav_profile -> loadFragment(ProfileFragment())
                 else -> false

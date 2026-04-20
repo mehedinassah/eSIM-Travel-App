@@ -120,18 +120,12 @@ class PaymentViewModel(private val paymentRepository: com.esim.travelapp.data.re
         viewModelScope.launch {
             val result = paymentRepository.createPayment(userId, purchaseId, amount, paymentMethod, transactionRef)
             result.onSuccess { paymentId ->
-                // Simulate payment processing
-                val success = kotlin.random.Random.nextBoolean()
-                if (success) {
-                    val updateResult = paymentRepository.updatePaymentStatus(paymentId, "completed")
-                    updateResult.onSuccess {
-                        _paymentState.value = PaymentState.Success(paymentId)
-                    }.onFailure { error ->
-                        _paymentState.value = PaymentState.Error(error.message ?: "Failed to update payment status")
-                    }
-                } else {
-                    paymentRepository.updatePaymentStatus(paymentId, "failed")
-                    _paymentState.value = PaymentState.Failed("Payment declined. Please try again.")
+                // For testing: always succeed. In production, integrate real Stripe API
+                val updateResult = paymentRepository.updatePaymentStatus(paymentId, "completed")
+                updateResult.onSuccess {
+                    _paymentState.value = PaymentState.Success(paymentId)
+                }.onFailure { error ->
+                    _paymentState.value = PaymentState.Error(error.message ?: "Failed to update payment status")
                 }
             }.onFailure { error ->
                 _paymentState.value = PaymentState.Error(error.message ?: "Payment processing failed")

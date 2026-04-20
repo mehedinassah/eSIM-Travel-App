@@ -76,9 +76,10 @@
             android:layout_height="wrap_content"
             android:text="Go Back"
             android:textSize="@dimen/text_size_18"
+            android:textStyle="bold"
             android:padding="@dimen/spacing_16"
-            android:background="@color/light_gray"
-            android:textColor="@color/primary" />
+            android:background="@drawable/button_secondary_bg"
+            android:textColor="@color/gray_800" />
     </LinearLayout>
 
 </LinearLayout>

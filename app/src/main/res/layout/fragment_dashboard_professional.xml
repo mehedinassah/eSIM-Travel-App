@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/gray_50">
+
+    <!-- Header with Location Status -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/gradient_header_bg"
+        android:padding="20dp"
+        android:paddingTop="24dp">
+
+        <!-- Greeting -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="16dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Welcome Back 👋"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    android:layout_marginBottom="4dp" />
+                <TextView
+                    android:id="@+id/greetingUserName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="User"
+                    android:textSize="14sp"
+                    android:textColor="@color/white" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/notificationBellButton"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:text="🔔"
+                android:textSize="24sp"
+                android:background="@drawable/button_circle_bg"
+                android:layout_gravity="center_vertical" />
+        </LinearLayout>
+
+        <!-- Location Card -->
+        <androidx.cardview.widget.CardView xmlns:cardview="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            cardview:cardCornerRadius="12dp"
+            cardview:cardElevation="4dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="16dp"
+                android:background="@color/white"
+                android:gravity="center_vertical">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="4dp">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="📍"
+                            android:textSize="16sp"
+                            android:layout_marginEnd="4dp" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Your Location"
+                            android:textSize="12sp"
+                            android:textColor="@color/gray_600" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/dashboardLocationText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Detecting location..."
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/primary"
+                        android:layout_marginBottom="4dp" />
+
+                    <TextView
+                        android:id="@+id/locationDescriptionText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Plans for your region"
+                        android:textSize="11sp"
+                        android:textColor="@color/gray_500" />
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/refreshLocationButton"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:text="🔄"
+                    android:textSize="18sp"
+                    android:background="@drawable/button_outline_bg"
+                    android:layout_marginStart="12dp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+    </LinearLayout>
+
+    <!-- Active Plans Section -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:paddingTop="12dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="12dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Your Active Plans"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/gray_900" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <Button
+                android:id="@+id/viewAllPlansButton"
+                android:layout_width="wrap_content"
+                android:layout_height="44dp"
+                android:text="View All →"
+                android:textColor="@color/primary"
+                android:textStyle="bold"
+                android:textSize="13sp"
+                android:textAllCaps="false"
+                android:background="@drawable/button_outline_small_bg"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:gravity="center"
+                android:elevation="2dp" />
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/activePlansRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:clipToPadding="false"
+            android:paddingEnd="16dp" />
+
+        <!-- Empty State for No Active Plans -->
+        <LinearLayout
+            android:id="@+id/noActivePlansLayout"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:orientation="vertical"
+            android:background="@drawable/empty_state_bg"
+            android:gravity="center"
+            android:visibility="gone">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="📱"
+                android:textSize="40sp"
+                android:layout_marginBottom="8dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No active plans"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@color/gray_600"
+                android:layout_marginBottom="4dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Purchase a plan to get started"
+                android:textSize="12sp"
+                android:textColor="@color/gray_400" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Quick Actions -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:paddingTop="8dp"
+        android:gravity="center">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="12dp">
+            <Button
+                android:id="@+id/buyPlanQuickButton"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:text="🛒"
+                android:textSize="28sp"
+                android:background="@drawable/button_circle_primary_bg"
+                android:layout_marginBottom="8dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Buy Plan"
+                android:textSize="12sp"
+                android:textColor="@color/gray_700" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="12dp">
+            <Button
+                android:id="@+id/topUpQuickButton"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:text="⚡"
+                android:textSize="28sp"
+                android:background="@drawable/button_circle_primary_bg"
+                android:layout_marginBottom="8dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Top-Up"
+                android:textSize="12sp"
+                android:textColor="@color/gray_700" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="12dp">
+            <Button
+                android:id="@+id/coverageQuickButton"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:text="🗺️"
+                android:textSize="28sp"
+                android:background="@drawable/button_circle_primary_bg"
+                android:layout_marginBottom="8dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Coverage"
+                android:textSize="12sp"
+                android:textColor="@color/gray_700" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="12dp">
+            <Button
+                android:id="@+id/supportQuickButton"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:text="💬"
+                android:textSize="28sp"
+                android:background="@drawable/button_circle_primary_bg"
+                android:layout_marginBottom="8dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Support"
+                android:textSize="12sp"
+                android:textColor="@color/gray_700" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>
