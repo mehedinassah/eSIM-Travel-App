@@ -6,7 +6,6 @@ import android.widget.Button
 import android.widget.RadioGroup
 import android.widget.TextView
 import android.widget.Toast
-import androidx.cardview.widget.CardView
 import androidx.lifecycle.ViewModelProvider
 import com.esim.travelapp.R
 import com.esim.travelapp.data.local.AppDatabase
@@ -15,7 +14,6 @@ import com.esim.travelapp.presentation.viewmodel.PaymentViewModel
 import com.esim.travelapp.presentation.viewmodel.ViewModelFactory
 import com.esim.travelapp.ui.BaseActivity
 import com.esim.travelapp.utils.PreferenceManager
-import com.stripe.android.view.CardInputWidget
 
 class PaymentActivity : BaseActivity() {
 
@@ -38,9 +36,10 @@ class PaymentActivity : BaseActivity() {
     private lateinit var closeButton: Button
     private lateinit var cancelButton: Button
     private lateinit var payNowButton: Button
-    private lateinit var cardInputWidget: CardInputWidget
-    private lateinit var cardInputContainer: CardView
-    private lateinit var cardTypeText: TextView
+
+    companion object {
+        private const val CARD_ENTRY_REQUEST_CODE = 100
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,9 +74,6 @@ class PaymentActivity : BaseActivity() {
         closeButton = findViewById(R.id.closeButton)
         cancelButton = findViewById(R.id.cancelButton)
         payNowButton = findViewById(R.id.payNowButton)
-        cardInputWidget = findViewById(R.id.cardInputWidget)
-        cardInputContainer = findViewById(R.id.cardInputContainer)
-        cardTypeText = findViewById(R.id.cardTypeText)
 
         // Display plan details
         planNameText.text = planName
@@ -85,18 +81,6 @@ class PaymentActivity : BaseActivity() {
         validityText.text = validity
         priceText.text = "$$amount"
         countryText.text = country
-
-        // Show/hide card input based on payment method selection
-        paymentMethodGroup.setOnCheckedChangeListener { _, checkedId ->
-            cardInputContainer.visibility = if (checkedId == R.id.creditCardRadio) {
-                android.view.View.VISIBLE
-            } else {
-                android.view.View.GONE
-            }
-        }
-
-        // Initialize with card input visible (credit card is checked by default)
-        cardInputContainer.visibility = android.view.View.VISIBLE
 
         // Close button
         closeButton.setOnClickListener {
@@ -128,71 +112,66 @@ class PaymentActivity : BaseActivity() {
     }
 
     private fun processPayment(paymentMethod: String) {
-        val transactionRef = "TXN_${System.currentTimeMillis()}"
-        
-        // For credit card, validate card is present (don't access sensitive details directly for PCI compliance)
-        if (paymentMethod == "credit_card") {
-            // CardInputWidget validates internally, just check if card params exist
-            // Accessing raw card details violates PCI compliance - let Stripe SDK handle validation
-            val cardParams = cardInputWidget.cardParams
-            
-            if (cardParams == null) {
-                Toast.makeText(this, "Please enter valid card details", Toast.LENGTH_SHORT).show()
-                return
-            }
-            
-            // Stripe SDK has validated the card internally
-            cardTypeText.text = "✓ Card Ready"
-        }
-        
-        payNowButton.isEnabled = false
-        payNowButton.text = "Processing..."
-
-        // Show different process based on payment method
         when (paymentMethod) {
             "credit_card" -> {
-                // Process credit card directly
-                paymentViewModel.processPayment(currentUserId, purchaseId, amount, "card", transactionRef)
+                // Navigate to dedicated card entry screen
+                val cardEntryIntent = Intent(this, CardEntryActivity::class.java)
+                cardEntryIntent.putExtra("purchase_id", purchaseId)
+                cardEntryIntent.putExtra("amount", amount)
+                cardEntryIntent.putExtra("plan_name", planName)
+                cardEntryIntent.putExtra("data_amount", dataAmount)
+                cardEntryIntent.putExtra("validity", validity)
+                cardEntryIntent.putExtra("country", country)
+                startActivityForResult(cardEntryIntent, CARD_ENTRY_REQUEST_CODE)
             }
             "google_pay" -> {
                 Toast.makeText(this, "Google Pay integration coming soon", Toast.LENGTH_SHORT).show()
-                payNowButton.isEnabled = true
-                payNowButton.text = "Proceed"
             }
             "bank_transfer" -> {
                 Toast.makeText(this, "Redirecting to bank transfer", Toast.LENGTH_SHORT).show()
-                payNowButton.isEnabled = true
-                payNowButton.text = "Proceed"
             }
         }
+    }
 
-        paymentViewModel.paymentState.observe(this) { state ->
-            when (state) {
-                is com.esim.travelapp.presentation.viewmodel.PaymentState.Processing -> {
-                    payNowButton.isEnabled = false
-                    payNowButton.text = "Processing..."
-                }
-                is com.esim.travelapp.presentation.viewmodel.PaymentState.Success -> {
-                    val paymentId = state.paymentId
-                    val confirmationIntent = Intent(this, PaymentConfirmationActivity::class.java)
-                    confirmationIntent.putExtra("payment_id", paymentId)
-                    confirmationIntent.putExtra("purchase_id", purchaseId)
-                    confirmationIntent.putExtra("amount", amount)
-                    confirmationIntent.putExtra("data_amount", dataAmount)
-                    startActivity(confirmationIntent)
-                    finish()
-                }
-                is com.esim.travelapp.presentation.viewmodel.PaymentState.Failed -> {
-                    payNowButton.isEnabled = true
-                    payNowButton.text = "Proceed"
-                    val failureIntent = Intent(this, PaymentFailureActivity::class.java)
-                    failureIntent.putExtra("error_message", state.message)
-                    startActivity(failureIntent)
-                }
-                is com.esim.travelapp.presentation.viewmodel.PaymentState.Error -> {
-                    payNowButton.isEnabled = true
-                    payNowButton.text = "Proceed"
-                    Toast.makeText(this, state.message, Toast.LENGTH_SHORT).show()
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        
+        if (requestCode == CARD_ENTRY_REQUEST_CODE && resultCode == RESULT_OK) {
+            // Card entry was successful, proceed with payment
+            val transactionRef = "TXN_${System.currentTimeMillis()}"
+            payNowButton.isEnabled = false
+            payNowButton.text = "Processing..."
+
+            paymentViewModel.processPayment(currentUserId, purchaseId, amount, "card", transactionRef)
+
+            paymentViewModel.paymentState.observe(this) { state ->
+                when (state) {
+                    is com.esim.travelapp.presentation.viewmodel.PaymentState.Processing -> {
+                        payNowButton.isEnabled = false
+                        payNowButton.text = "Processing..."
+                    }
+                    is com.esim.travelapp.presentation.viewmodel.PaymentState.Success -> {
+                        val paymentId = state.paymentId
+                        val confirmationIntent = Intent(this, PaymentConfirmationActivity::class.java)
+                        confirmationIntent.putExtra("payment_id", paymentId)
+                        confirmationIntent.putExtra("purchase_id", purchaseId)
+                        confirmationIntent.putExtra("amount", amount)
+                        confirmationIntent.putExtra("data_amount", dataAmount)
+                        startActivity(confirmationIntent)
+                        finish()
+                    }
+                    is com.esim.travelapp.presentation.viewmodel.PaymentState.Failed -> {
+                        payNowButton.isEnabled = true
+                        payNowButton.text = "Proceed"
+                        val failureIntent = Intent(this, PaymentFailureActivity::class.java)
+                        failureIntent.putExtra("error_message", state.message)
+                        startActivity(failureIntent)
+                    }
+                    is com.esim.travelapp.presentation.viewmodel.PaymentState.Error -> {
+                        payNowButton.isEnabled = true
+                        payNowButton.text = "Proceed"
+                        Toast.makeText(this, state.message, Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }

@@ -236,67 +236,6 @@
                 android:paddingEnd="16dp"
                 android:gravity="center_vertical" />
         </RadioGroup>
-
-        <!-- Card Input Form (shown when Credit Card is selected) -->
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardInputContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
-            xmlns:cardview="http://schemas.android.com/apk/res-auto"
-            cardview:cardCornerRadius="8dp"
-            cardview:cardElevation="2dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp"
-                android:background="@color/white">
-
-                <!-- Stripe Card Input Widget -->
-                <com.stripe.android.view.CardInputWidget
-                    android:id="@+id/cardInputWidget"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="12dp" />
-
-                <!-- Card Details Display -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="8dp"
-                    android:gravity="center_vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Card Type:"
-                        android:textSize="12sp"
-                        android:textColor="@color/gray_600"
-                        android:layout_marginEnd="8dp" />
-
-                    <TextView
-                        android:id="@+id/cardTypeText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Not detected"
-                        android:textSize="12sp"
-                        android:textColor="@color/gray_900"
-                        android:textStyle="bold" />
-                </LinearLayout>
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Enter your card number, expiry date, and CVC above"
-                    android:textSize="11sp"
-                    android:textColor="@color/gray_500"
-                    android:layout_marginTop="12dp" />
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
     </LinearLayout>
 
     <!-- Spacer -->

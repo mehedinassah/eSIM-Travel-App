@@ -4,6 +4,7 @@
     <color name="primary">#FF0066CC</color>
     <color name="primary_dark">#FF0052A3</color>
     <color name="primary_light">#FF3385FF</color>
+    <color name="blue_50">#FFF0F7FF</color>
     
     <!-- Secondary Colors (Accent Green) -->
     <color name="secondary">#FF00CC66</color>
