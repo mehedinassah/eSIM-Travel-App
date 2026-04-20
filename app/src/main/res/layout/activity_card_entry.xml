@@ -47,109 +47,157 @@
             android:orientation="vertical"
             android:padding="24dp">
 
-            <!-- Card Input Card -->
+            <!-- Card Payment Form Box -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
                 xmlns:cardview="http://schemas.android.com/apk/res-auto"
+                cardview:cardCornerRadius="16dp"
+                cardview:cardElevation="6dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="28dp"
+                    android:background="@color/white">
+
+                    <!-- Form Title -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Payment Information"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/gray_900"
+                        android:layout_marginBottom="8dp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Enter your card details below"
+                        android:textSize="13sp"
+                        android:textColor="@color/gray_600"
+                        android:layout_marginBottom="24dp" />
+
+                    <!-- Divider -->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/gray_200"
+                        android:layout_marginBottom="24dp" />
+
+                    <!-- Card Input Label -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Card Number"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/gray_700"
+                        android:layout_marginBottom="8dp" />
+
+                    <!-- Stripe Card Input Widget - Full Width -->
+                    <com.stripe.android.view.CardInputWidget
+                        android:id="@+id/cardInputWidget"
+                        android:layout_width="match_parent"
+                        android:layout_height="120dp"
+                        android:layout_marginBottom="20dp"
+                        android:background="@color/gray_50"
+                        android:padding="12dp" />
+
+                    <!-- Card Validation Status Box -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp"
+                        android:background="@color/gray_50"
+                        android:gravity="center">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Validation Status"
+                            android:textSize="11sp"
+                            android:textColor="@color/gray_600"
+                            android:layout_marginBottom="6dp" />
+
+                        <TextView
+                            android:id="@+id/cardTypeText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Not detected"
+                            android:textSize="14sp"
+                            android:textColor="@color/gray_900"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <!-- Helper Text -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Enter card number, expiry date (MM/YY), and CVC"
+                        android:textSize="11sp"
+                        android:textColor="@color/gray_500"
+                        android:layout_marginTop="16dp"
+                        android:lineSpacingMultiplier="1.3" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Security Info Banner -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                xmlns:cardview="http://schemas.android.com/apk/res-auto"
                 cardview:cardCornerRadius="12dp"
-                cardview:cardElevation="4dp">
+                cardview:cardElevation="3dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="20dp"
-                    android:background="@color/white">
+                    android:background="@color/blue_50">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Card Information"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/gray_900"
-                        android:layout_marginBottom="16dp" />
-
-                    <!-- Stripe Card Input Widget -->
-                    <com.stripe.android.view.CardInputWidget
-                        android:id="@+id/cardInputWidget"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="16dp" />
-
-                    <!-- Card Status -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:layout_marginTop="12dp"
-                        android:padding="12dp"
-                        android:background="@color/gray_50">
+                        android:gravity="center_vertical">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Status:"
-                            android:textSize="12sp"
-                            android:textColor="@color/gray_600"
-                            android:layout_marginEnd="8dp" />
+                            android:text="🔒"
+                            android:textSize="24sp"
+                            android:layout_marginEnd="12dp" />
 
-                        <TextView
-                            android:id="@+id/cardTypeText"
+                        <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Not detected"
-                            android:textSize="12sp"
-                            android:textColor="@color/gray_900"
-                            android:textStyle="bold" />
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Secure &amp; Encrypted"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                android:textColor="@color/primary"
+                                android:layout_marginBottom="4dp" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Processed by Stripe. Your card details are never stored."
+                                android:textSize="12sp"
+                                android:textColor="@color/gray_700"
+                                android:lineSpacingMultiplier="1.2" />
+                        </LinearLayout>
                     </LinearLayout>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Enter your card number, expiry date (MM/YY), and 3-digit CVC code"
-                        android:textSize="11sp"
-                        android:textColor="@color/gray_500"
-                        android:layout_marginTop="12dp"
-                        android:lineSpacingMultiplier="1.2" />
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <!-- Security Info Card -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                xmlns:cardview="http://schemas.android.com/apk/res-auto"
-                cardview:cardCornerRadius="8dp"
-                cardview:cardElevation="2dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp"
-                    android:background="@color/blue_50">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🔒 Secure Payment"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/primary"
-                        android:layout_marginBottom="8dp" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Your card information is encrypted and processed securely by Stripe. We never store your card details."
-                        android:textSize="12sp"
-                        android:textColor="@color/gray_700"
-                        android:lineSpacingMultiplier="1.3" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
         </LinearLayout>
@@ -159,35 +207,17 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:padding="16dp"
-        android:gravity="bottom"
         android:background="@color/white"
         android:elevation="8dp">
 
-        <Button
-            android:id="@+id/cancelButton"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:layout_weight="1"
-            android:text="CANCEL"
-            android:textColor="@color/primary"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textAllCaps="false"
-            android:background="@drawable/button_outline_bg"
-            android:gravity="center_vertical|center_horizontal"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:layout_marginEnd="8dp"
-            android:elevation="2dp" />
-
+        <!-- Continue Button - Primary Action -->
         <Button
             android:id="@+id/continueButton"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:layout_weight="1"
-            android:text="Continue"
+            android:text="Continue to Payment"
             android:textColor="@color/white"
             android:textSize="16sp"
             android:textStyle="bold"
@@ -196,8 +226,24 @@
             android:gravity="center_vertical|center_horizontal"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
-            android:layout_marginStart="8dp"
-            android:elevation="2dp" />
+            android:elevation="2dp"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Cancel Button - Secondary Action -->
+        <Button
+            android:id="@+id/cancelButton"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:text="Cancel"
+            android:textColor="@color/primary"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textAllCaps="false"
+            android:background="@drawable/button_outline_bg"
+            android:gravity="center_vertical|center_horizontal"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:elevation="1dp" />
     </LinearLayout>
 
 </LinearLayout>
