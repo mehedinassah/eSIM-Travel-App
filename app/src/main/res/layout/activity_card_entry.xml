@@ -52,69 +52,93 @@
             android:orientation="vertical"
             android:padding="@dimen/spacing_24">
 
-            <!-- Form Title -->
-            <TextView
+            <!-- Form Box Container -->
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Card Details"
-                android:textSize="@dimen/text_size_18"
-                android:textStyle="bold"
-                android:textColor="@color/gray_900"
-                android:layout_marginBottom="@dimen/spacing_16" />
+                xmlns:cardview="http://schemas.android.com/apk/res-auto"
+                cardview:cardCornerRadius="@dimen/corner_radius_12"
+                cardview:cardElevation="2dp"
+                cardview:cardBackgroundColor="@color/white">
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Enter your card number, expiration date, and CVC"
-                android:textSize="@dimen/text_size_14"
-                android:textColor="@color/gray_600"
-                android:layout_marginBottom="@dimen/spacing_24" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_24">
 
-            <!-- Card Input Widget -->
-            <com.stripe.android.view.CardInputWidget
-                android:id="@+id/cardInputWidget"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/spacing_24"
-                android:background="@color/white"
-                android:padding="@dimen/spacing_12" />
+                    <!-- Form Title -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Card Details"
+                        android:textSize="@dimen/text_size_18"
+                        android:textStyle="bold"
+                        android:textColor="@color/gray_900"
+                        android:layout_marginBottom="@dimen/spacing_8" />
 
-            <!-- Card Type Status (Minimal) -->
-            <TextView
-                android:id="@+id/cardTypeText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Card type detected automatically"
-                android:textSize="@dimen/text_size_12"
-                android:textColor="@color/gray_500"
-                android:layout_marginBottom="@dimen/spacing_32" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Enter your card number, expiration date, and CVC"
+                        android:textSize="@dimen/text_size_14"
+                        android:textColor="@color/gray_600"
+                        android:layout_marginBottom="@dimen/spacing_24" />
+
+                    <!-- Divider -->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/gray_200"
+                        android:layout_marginBottom="@dimen/spacing_24" />
+
+                    <!-- Card Input Widget -->
+                    <com.stripe.android.view.CardInputWidget
+                        android:id="@+id/cardInputWidget"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:layout_marginBottom="@dimen/spacing_24"
+                        android:background="@color/white" />
+
+                    <!-- Card Type Status (Minimal) -->
+                    <TextView
+                        android:id="@+id/cardTypeText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Card type detected automatically"
+                        android:textSize="@dimen/text_size_12"
+                        android:textColor="@color/gray_500" />
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
             <!-- Continue Button -->
             <Button
                 android:id="@+id/continueButton"
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
+                android:layout_height="48dp"
                 android:text="Continue to Payment"
                 android:textColor="@color/white"
                 android:textSize="@dimen/text_size_16"
                 android:textStyle="bold"
                 android:textAllCaps="false"
                 android:background="@color/primary"
-                android:padding="@dimen/spacing_16"
+                android:gravity="center"
+                android:layout_marginTop="@dimen/spacing_24"
                 android:layout_marginBottom="@dimen/spacing_12" />
 
             <!-- Cancel Button -->
             <Button
                 android:id="@+id/cancelButton"
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
+                android:layout_height="48dp"
                 android:text="Cancel"
                 android:textColor="@color/primary"
                 android:textSize="@dimen/text_size_16"
                 android:textStyle="bold"
                 android:textAllCaps="false"
                 android:background="@drawable/button_outline_bg"
-                android:padding="@dimen/spacing_16" />
+                android:gravity="center" />
         </LinearLayout>
     </ScrollView>
 
