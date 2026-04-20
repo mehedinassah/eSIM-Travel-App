@@ -6,6 +6,7 @@ import android.widget.Button
 import android.widget.RadioGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.cardview.widget.CardView
 import androidx.lifecycle.ViewModelProvider
 import com.esim.travelapp.R
 import com.esim.travelapp.data.local.AppDatabase
@@ -14,6 +15,7 @@ import com.esim.travelapp.presentation.viewmodel.PaymentViewModel
 import com.esim.travelapp.presentation.viewmodel.ViewModelFactory
 import com.esim.travelapp.ui.BaseActivity
 import com.esim.travelapp.utils.PreferenceManager
+import com.stripe.android.view.CardInputWidget
 
 class PaymentActivity : BaseActivity() {
 
@@ -36,6 +38,9 @@ class PaymentActivity : BaseActivity() {
     private lateinit var closeButton: Button
     private lateinit var cancelButton: Button
     private lateinit var payNowButton: Button
+    private lateinit var cardInputWidget: CardInputWidget
+    private lateinit var cardInputContainer: CardView
+    private lateinit var cardTypeText: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,6 +75,9 @@ class PaymentActivity : BaseActivity() {
         closeButton = findViewById(R.id.closeButton)
         cancelButton = findViewById(R.id.cancelButton)
         payNowButton = findViewById(R.id.payNowButton)
+        cardInputWidget = findViewById(R.id.cardInputWidget)
+        cardInputContainer = findViewById(R.id.cardInputContainer)
+        cardTypeText = findViewById(R.id.cardTypeText)
 
         // Display plan details
         planNameText.text = planName
@@ -77,6 +85,18 @@ class PaymentActivity : BaseActivity() {
         validityText.text = validity
         priceText.text = "$$amount"
         countryText.text = country
+
+        // Show/hide card input based on payment method selection
+        paymentMethodGroup.setOnCheckedChangeListener { _, checkedId ->
+            cardInputContainer.visibility = if (checkedId == R.id.creditCardRadio) {
+                android.view.View.VISIBLE
+            } else {
+                android.view.View.GONE
+            }
+        }
+
+        // Initialize with card input visible (credit card is checked by default)
+        cardInputContainer.visibility = android.view.View.VISIBLE
 
         // Close button
         closeButton.setOnClickListener {
@@ -109,6 +129,21 @@ class PaymentActivity : BaseActivity() {
 
     private fun processPayment(paymentMethod: String) {
         val transactionRef = "TXN_${System.currentTimeMillis()}"
+        
+        // For credit card, validate card is present (don't access sensitive details directly for PCI compliance)
+        if (paymentMethod == "credit_card") {
+            // CardInputWidget validates internally, just check if card params exist
+            // Accessing raw card details violates PCI compliance - let Stripe SDK handle validation
+            val cardParams = cardInputWidget.cardParams
+            
+            if (cardParams == null) {
+                Toast.makeText(this, "Please enter valid card details", Toast.LENGTH_SHORT).show()
+                return
+            }
+            
+            // Stripe SDK has validated the card internally
+            cardTypeText.text = "✓ Card Ready"
+        }
         
         payNowButton.isEnabled = false
         payNowButton.text = "Processing..."
