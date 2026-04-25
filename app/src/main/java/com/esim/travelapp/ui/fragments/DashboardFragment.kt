@@ -22,13 +22,14 @@ import com.esim.travelapp.presentation.viewmodel.LocationViewModel
 import com.esim.travelapp.presentation.viewmodel.PurchaseViewModel
 import com.esim.travelapp.presentation.viewmodel.ViewModelFactory
 import com.esim.travelapp.ui.adapter.ActivePlanAdapter
-import com.esim.travelapp.ui.purchase.PlanDetailsActivity
+import com.esim.travelapp.ui.adapter.ActivePlanDisplayModel
 import com.esim.travelapp.ui.support.SupportActivity
 import com.esim.travelapp.utils.LocationManager
 import com.esim.travelapp.utils.PreferenceManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class DashboardFragment : Fragment() {
 
@@ -36,6 +37,7 @@ class DashboardFragment : Fragment() {
     private lateinit var locationViewModel: LocationViewModel
     private lateinit var locationManager: LocationManager
     private var currentUserId: Int = 0
+    private lateinit var database: AppDatabase
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -50,6 +52,7 @@ class DashboardFragment : Fragment() {
 
         currentUserId = PreferenceManager.getUserId(requireContext())
         locationManager = LocationManager(requireContext())
+        database = AppDatabase.getInstance(requireContext())
 
         setupViewModel()
         setupUI(view)
@@ -58,7 +61,6 @@ class DashboardFragment : Fragment() {
     }
 
     private fun setupViewModel() {
-        val database = AppDatabase.getInstance(requireContext())
         val purchaseRepository = PurchaseRepository(database.purchaseDao())
         val locationRepository = LocationRepository(database.locationDao())
         val factory = ViewModelFactory(purchaseRepository = purchaseRepository, locationRepository = locationRepository)
@@ -128,25 +130,69 @@ class DashboardFragment : Fragment() {
         val activePlansRecyclerView: RecyclerView = view.findViewById(R.id.activePlansRecyclerView)
         val noActivePlansLayout: LinearLayout = view.findViewById(R.id.noActivePlansLayout)
 
+        // Start in empty-state mode until data is loaded.
+        noActivePlansLayout.visibility = View.VISIBLE
+        activePlansRecyclerView.visibility = View.GONE
+
         activePlansRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         
-        val activePlanAdapter = ActivePlanAdapter { purchase ->
-            // Handle details button click
-            Toast.makeText(requireContext(), "Plan details for purchase #${purchase.id}", Toast.LENGTH_SHORT).show()
-        }
+        val activePlanAdapter = ActivePlanAdapter(
+            onDetailsClick = { purchase ->
+                Toast.makeText(requireContext(), "Plan details for purchase #${purchase.id}", Toast.LENGTH_SHORT).show()
+            },
+            onRenewClick = { purchase ->
+                Toast.makeText(requireContext(), "Renewing plan #${purchase.id}", Toast.LENGTH_SHORT).show()
+                // Navigate to storefront for renewal
+                requireActivity().supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragmentContainer, StorefrontEnhancedFragment())
+                    .addToBackStack(null)
+                    .commit()
+            }
+        )
         activePlansRecyclerView.adapter = activePlanAdapter
 
+        // Load purchases and enrich with plan details and data usage
         purchaseViewModel.getUserPurchases(currentUserId).asLiveData().observe(viewLifecycleOwner) { purchases ->
-            // Show both pending and completed purchases as active plans
-            val activePurchases = purchases.filter { it.status == "completed" || it.status == "pending" }
+            // Show only completed purchases as active plans
+            val activePurchases = purchases.filter { it.status == "completed" }
             
             if (activePurchases.isEmpty()) {
                 noActivePlansLayout.visibility = View.VISIBLE
                 activePlansRecyclerView.visibility = View.GONE
             } else {
-                noActivePlansLayout.visibility = View.GONE
-                activePlansRecyclerView.visibility = View.VISIBLE
-                activePlanAdapter.submitList(activePurchases)
+                // Enrich purchases with plan details and usage data
+                CoroutineScope(Dispatchers.Main).launch {
+                    val displayModels = withContext(Dispatchers.IO) {
+                        activePurchases.mapNotNull { purchase ->
+                            try {
+                                // Get plan details
+                                val plan = database.esimPlanDao().getPlanById(purchase.planId)
+                                    ?: return@mapNotNull null
+
+                                // Get activation for this purchase
+                                val activation = database.esimActivationDao().getActivationByPurchaseId(purchase.id)
+
+                                // Get data usage if activation exists
+                                val usage = activation?.let {
+                                    database.dataUsageDao().getUsageByActivationId(it.id)
+                                }
+
+                                ActivePlanDisplayModel(purchase, plan, usage)
+                            } catch (e: Exception) {
+                                null
+                            }
+                        }
+                    }
+
+                    if (displayModels.isEmpty()) {
+                        noActivePlansLayout.visibility = View.VISIBLE
+                        activePlansRecyclerView.visibility = View.GONE
+                    } else {
+                        noActivePlansLayout.visibility = View.GONE
+                        activePlansRecyclerView.visibility = View.VISIBLE
+                        activePlanAdapter.submitList(displayModels)
+                    }
+                }
             }
         }
     }

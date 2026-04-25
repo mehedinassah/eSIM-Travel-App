@@ -108,6 +108,39 @@
             </LinearLayout>
         </LinearLayout>
 
+        <!-- Data Usage Progress Bar -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="12dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Data Usage"
+                android:textSize="10sp"
+                android:textColor="@color/gray_600"
+                android:layout_marginBottom="4dp" />
+
+            <ProgressBar
+                android:id="@+id/dataProgressBar"
+                android:layout_width="match_parent"
+                android:layout_height="8dp"
+                android:progress="0"
+                android:max="100"
+                android:progressDrawable="@android:drawable/progress_horizontal"
+                android:layout_marginBottom="4dp" />
+
+            <TextView
+                android:id="@+id/dataUsageText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0/5 GB"
+                android:textSize="11sp"
+                android:textColor="@color/gray_600" />
+        </LinearLayout>
+
         <!-- Action Buttons -->
         <LinearLayout
             android:layout_width="match_parent"
