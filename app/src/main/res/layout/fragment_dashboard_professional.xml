@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -158,16 +159,20 @@
                 android:id="@+id/viewAllPlansButton"
                 android:layout_width="wrap_content"
                 android:layout_height="44dp"
-                android:text="View All →"
-                android:textColor="@color/primary"
+                android:minWidth="128dp"
+                android:text="View All Plans"
+                android:textColor="@color/white"
                 android:textStyle="bold"
-                android:textSize="13sp"
+                android:textSize="14sp"
                 android:textAllCaps="false"
-                android:background="@drawable/button_outline_small_bg"
-                android:paddingStart="20dp"
-                android:paddingEnd="20dp"
+                android:background="@drawable/button_primary_bg"
+                android:backgroundTint="@null"
+                app:backgroundTint="@null"
+                android:paddingStart="18dp"
+                android:paddingEnd="18dp"
                 android:gravity="center"
-                android:elevation="2dp" />
+                android:elevation="2dp"
+                android:contentDescription="View all active plans" />
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
