@@ -49,7 +49,7 @@ class DashboardFragment : Fragment() {
     private var fragmentView: View? = null
     private var usageObserverJob: Job? = null
 
-    // Summary card views – kept as fields for live updates
+    // Summary card views kept as fields for live updates
     private var activePlanSummaryCard: CardView? = null
     private var activePlanSummaryName: TextView? = null
     private var activePlanSummaryData: TextView? = null
@@ -63,9 +63,7 @@ class DashboardFragment : Fragment() {
 
     private val locationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissions ->
-        val granted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false
-                || permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false
+    ) { _ ->
         fragmentView?.let { if (isAdded) detectUserLocation(it) }
     }
 
@@ -79,7 +77,6 @@ class DashboardFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         fragmentView = view
         currentUserId = PreferenceManager.getUserId(requireContext())
         locationManager = LocationManager(requireContext())
@@ -104,7 +101,10 @@ class DashboardFragment : Fragment() {
     private fun setupViewModel() {
         val purchaseRepository = PurchaseRepository(database.purchaseDao())
         val locationRepository = LocationRepository(database.locationDao())
-        val factory = ViewModelFactory(purchaseRepository = purchaseRepository, locationRepository = locationRepository)
+        val factory = ViewModelFactory(
+            purchaseRepository = purchaseRepository,
+            locationRepository = locationRepository
+        )
         purchaseViewModel = ViewModelProvider(this, factory).get(PurchaseViewModel::class.java)
         locationViewModel = ViewModelProvider(this, factory).get(LocationViewModel::class.java)
     }
@@ -120,7 +120,6 @@ class DashboardFragment : Fragment() {
         val viewAllPlansButton: Button = view.findViewById(R.id.viewAllPlansButton)
 
         greetingUserName.text = PreferenceManager.getUserName(requireContext())
-
         notificationBellButton.setOnClickListener {
             Toast.makeText(requireContext(), "Opening notifications", Toast.LENGTH_SHORT).show()
         }
@@ -144,20 +143,18 @@ class DashboardFragment : Fragment() {
     }
 
     private fun loadActivePlans(view: View) {
-        activePlansRecyclerView = view.findViewById(R.id.activePlansRecyclerView)
-        activePlanCountText = view.findViewById(R.id.activePlanCountText)
-        noActivePlansLayout = view.findViewById(R.id.noActivePlansLayout)
-        activePlanSummaryCard = view.findViewById(R.id.activePlanSummaryCard)
-        activePlanSummaryName = view.findViewById(R.id.activePlanSummaryName)
-        activePlanSummaryData = view.findViewById(R.id.activePlanSummaryData)
+        activePlansRecyclerView   = view.findViewById(R.id.activePlansRecyclerView)
+        activePlanCountText       = view.findViewById(R.id.activePlanCountText)
+        noActivePlansLayout       = view.findViewById(R.id.noActivePlansLayout)
+        activePlanSummaryCard     = view.findViewById(R.id.activePlanSummaryCard)
+        activePlanSummaryName     = view.findViewById(R.id.activePlanSummaryName)
+        activePlanSummaryData     = view.findViewById(R.id.activePlanSummaryData)
         activePlanSummaryRemaining = view.findViewById(R.id.activePlanSummaryRemaining)
         activePlanSummaryProgress = view.findViewById(R.id.activePlanSummaryProgress)
-        activePlanSummaryValidity = view.findViewById(R.id.activePlanSummaryValidity)
+        activePlanSummaryValidity  = view.findViewById(R.id.activePlanSummaryValidity)
 
-        noActivePlansLayout?.visibility = View.VISIBLE
-        activePlansRecyclerView?.visibility = View.GONE
-        activePlanSummaryCard?.visibility = View.GONE
-        activePlanCountText?.text = "0 active"
+        // Default: show empty state
+        showEmptyState()
 
         activePlansRecyclerView?.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
@@ -165,73 +162,87 @@ class DashboardFragment : Fragment() {
 
         activePlanAdapter = ActivePlanAdapter(
             onDetailsClick = { purchase ->
-                Toast.makeText(requireContext(), "Plan details for purchase #${purchase.id}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Plan: Purchase #${purchase.id}", Toast.LENGTH_SHORT).show()
             },
             onRenewClick = { _ -> navigateToStorefront() }
         )
         activePlansRecyclerView?.adapter = activePlanAdapter
 
-        // Observe purchases
         purchaseViewModel.getUserPurchases(currentUserId).asLiveData()
             .observe(viewLifecycleOwner) { purchases ->
+                // Show ALL completed purchases — no activation gate
                 val completedPurchases = purchases.filter { it.status == "completed" }
+
                 if (completedPurchases.isEmpty()) {
                     showEmptyState()
                     return@observe
                 }
 
                 viewLifecycleOwner.lifecycleScope.launch {
-                    val activatedPairs = withContext(Dispatchers.IO) {
+                    val displayModels = withContext(Dispatchers.IO) {
                         completedPurchases.mapNotNull { purchase ->
                             try {
                                 val plan = database.esimPlanDao().getPlanById(purchase.planId)
                                     ?: return@mapNotNull null
+
+                                // Try to get activation & usage — but don't gate on it
                                 val activation = database.esimActivationDao()
                                     .getActivationByPurchaseId(purchase.id)
-                                if (activation?.activationStatus != "activated") return@mapNotNull null
-                                Triple(purchase, plan, activation)
-                            } catch (e: Exception) { null }
+                                val usage = activation?.let {
+                                    database.dataUsageDao().getUsageByActivationId(it.id)
+                                }
+
+                                ActivePlanDisplayModel(purchase, plan, usage)
+                            } catch (e: Exception) {
+                                null
+                            }
                         }
                     }
 
-                    if (activatedPairs.isEmpty()) {
+                    if (displayModels.isEmpty()) {
                         showEmptyState()
                         return@launch
                     }
 
-                    // Initial snapshot display
-                    val initialModels = withContext(Dispatchers.IO) {
-                        activatedPairs.map { (purchase, plan, activation) ->
-                            val usage = database.dataUsageDao().getUsageByActivationId(activation.id)
-                            ActivePlanDisplayModel(purchase, plan, usage)
-                        }
-                    }
-                    showActivePlans(initialModels)
+                    // Show the list
+                    showActivePlans(displayModels)
 
-                    // Now observe the FIRST plan's usage live for the summary card
-                    val firstActivation = activatedPairs.first().third
-                    startLiveUsageObserver(firstActivation.id, activatedPairs.first())
+                    // Live-observe usage for the first plan's summary card
+                    val firstActivation = withContext(Dispatchers.IO) {
+                        database.esimActivationDao()
+                            .getActivationByPurchaseId(displayModels.first().purchase.id)
+                    }
+
+                    if (firstActivation != null) {
+                        startLiveUsageObserver(firstActivation.id, displayModels.first())
+                    } else {
+                        // No activation record yet — just show plan info without usage
+                        val first = displayModels.first()
+                        activePlanSummaryName?.text     = first.plan.planName
+                        activePlanSummaryData?.text     = "Data: ${first.plan.dataAmount}"
+                        activePlanSummaryRemaining?.text = "100% remaining (${first.plan.dataAmount})"
+                        activePlanSummaryProgress?.progress = 100
+                        activePlanSummaryValidity?.text = "Validity: ${first.plan.validityDays} days"
+                        activePlanSummaryCard?.visibility = View.VISIBLE
+                    }
                 }
             }
     }
 
     /**
-     * Observe data usage for the primary plan in real-time (Flow) so the
-     * summary card and progress bar update every second as the service writes.
+     * Observes DataUsageEntity via Flow so the summary card updates in real-time
+     * every second as DataUsageService writes to the DB.
      */
     private fun startLiveUsageObserver(
         activationId: Int,
-        primaryPair: Triple<
-            com.esim.travelapp.data.local.entity.PurchaseEntity,
-            com.esim.travelapp.data.local.entity.ESIMPlanEntity,
-            com.esim.travelapp.data.local.entity.ESIMActivationEntity>
+        primaryModel: ActivePlanDisplayModel
     ) {
         usageObserverJob?.cancel()
         usageObserverJob = viewLifecycleOwner.lifecycleScope.launch {
             database.dataUsageDao()
                 .observeUsageByActivationId(activationId)
                 .collectLatest { usage ->
-                    val plan = primaryPair.second
+                    val plan = primaryModel.plan
                     val remainingPercent = if (usage != null && usage.dataTotal > 0) {
                         ((usage.dataRemaining / usage.dataTotal) * 100).toInt().coerceIn(0, 100)
                     } else 100
@@ -239,7 +250,9 @@ class DashboardFragment : Fragment() {
                     activePlanSummaryName?.text = plan.planName
                     activePlanSummaryData?.text = "Data: ${plan.dataAmount}"
                     activePlanSummaryRemaining?.text = if (usage != null) {
-                        "${remainingPercent}% remaining  (${String.format("%.2f", usage.dataRemaining)} / ${String.format("%.2f", usage.dataTotal)} GB)"
+                        "${remainingPercent}% remaining  " +
+                        "(${String.format("%.2f", usage.dataRemaining)} / " +
+                        "${String.format("%.2f", usage.dataTotal)} GB)"
                     } else {
                         "100% remaining (${plan.dataAmount})"
                     }
@@ -251,7 +264,7 @@ class DashboardFragment : Fragment() {
     }
 
     private fun showActivePlans(models: List<ActivePlanDisplayModel>) {
-        noActivePlansLayout?.visibility = View.GONE
+        noActivePlansLayout?.visibility   = View.GONE
         activePlansRecyclerView?.visibility = View.VISIBLE
         activePlanCountText?.text = "${models.size} active"
         activePlanAdapter?.submitList(models) {
@@ -260,16 +273,15 @@ class DashboardFragment : Fragment() {
     }
 
     private fun showEmptyState() {
-        noActivePlansLayout?.visibility = View.VISIBLE
+        noActivePlansLayout?.visibility    = View.VISIBLE
         activePlansRecyclerView?.visibility = View.GONE
-        activePlanSummaryCard?.visibility = View.GONE
+        activePlanSummaryCard?.visibility  = View.GONE
         activePlanCountText?.text = "0 active"
     }
 
     private fun detectUserLocation(view: View) {
         val dashboardLocationText: TextView = view.findViewById(R.id.dashboardLocationText)
         val locationDescriptionText: TextView = view.findViewById(R.id.locationDescriptionText)
-
         dashboardLocationText.text = "Detecting location..."
 
         CoroutineScope(Dispatchers.Main).launch {
@@ -298,8 +310,7 @@ class DashboardFragment : Fragment() {
     private fun requestLocationPermission(view: View) {
         try {
             if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-                == android.content.pm.PackageManager.PERMISSION_GRANTED
-            ) {
+                == android.content.pm.PackageManager.PERMISSION_GRANTED) {
                 PreferenceManager.setLocationPermissionAsked(requireContext())
                 detectUserLocation(view)
             } else {
