@@ -23,6 +23,8 @@ class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
             result.onSuccess { user ->
                 _currentUser.value = user
                 _loginState.value = AuthState.Success(user)
+                // Save user data to preferences
+                PreferenceManager.saveUser(context, user.id, user.name, user.email)
             }.onFailure { error ->
                 _loginState.value = AuthState.Error(error.message ?: "Login failed")
             }
@@ -36,6 +38,8 @@ class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
             result.onSuccess { user ->
                 _currentUser.value = user
                 _loginState.value = AuthState.Success(user)
+                // Save user data to preferences
+                PreferenceManager.saveUser(context, user.id, user.name, user.email)
             }.onFailure { error ->
                 _loginState.value = AuthState.Error(error.message ?: "Registration failed")
             }

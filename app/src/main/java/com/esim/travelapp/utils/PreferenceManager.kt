@@ -11,6 +11,8 @@ object PreferenceManager {
     private const val NOTIFICATIONS_ENABLED = "notifications_enabled"
     private const val DATA_USAGE_TRACKING = "data_usage_tracking"
     private const val LANGUAGE_PREFERENCE = "language_preference"
+    private const val LOCATION_PERMISSION_ASKED = "location_permission_asked"
+    private const val LOCATION_PERMISSION_TYPE = "location_permission_type"
 
     private fun getPreferences(context: Context): SharedPreferences {
         return context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
@@ -43,7 +45,19 @@ object PreferenceManager {
     }
 
     fun clearUser(context: Context) {
-        getPreferences(context).edit().clear().apply()
+        getPreferences(context).edit().apply {
+            clear()
+            apply()
+        }
+    }
+
+    // Clear location permissions on logout
+    fun resetLocationPermissions(context: Context) {
+        getPreferences(context).edit().apply {
+            remove(LOCATION_PERMISSION_ASKED)
+            remove(LOCATION_PERMISSION_TYPE)
+            apply()
+        }
     }
 
     // Settings Management
@@ -69,5 +83,22 @@ object PreferenceManager {
 
     fun getLanguagePreference(context: Context): String {
         return getPreferences(context).getString(LANGUAGE_PREFERENCE, "English") ?: "English"
+    }
+
+    // Location Permission Management
+    fun setLocationPermissionAsked(context: Context) {
+        getPreferences(context).edit().putBoolean(LOCATION_PERMISSION_ASKED, true).apply()
+    }
+
+    fun hasLocationPermissionBeenAsked(context: Context): Boolean {
+        return getPreferences(context).getBoolean(LOCATION_PERMISSION_ASKED, false)
+    }
+
+    fun setLocationPermissionType(context: Context, type: String) {
+        getPreferences(context).edit().putString(LOCATION_PERMISSION_TYPE, type).apply()
+    }
+
+    fun getLocationPermissionType(context: Context): String {
+        return getPreferences(context).getString(LOCATION_PERMISSION_TYPE, "") ?: ""
     }
 }
