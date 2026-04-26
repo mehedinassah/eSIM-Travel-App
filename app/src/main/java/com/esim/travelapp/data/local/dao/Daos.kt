@@ -126,6 +126,9 @@ interface DataUsageDao {
     @Query("SELECT * FROM data_usage WHERE activationId = :activationId LIMIT 1")
     suspend fun getUsageByActivationId(activationId: Int): com.esim.travelapp.data.local.entity.DataUsageEntity?
 
+    @Query("SELECT * FROM data_usage WHERE activationId = :activationId LIMIT 1")
+    fun observeUsageByActivationId(activationId: Int): Flow<com.esim.travelapp.data.local.entity.DataUsageEntity?>
+
     @Update
     suspend fun updateUsage(usage: com.esim.travelapp.data.local.entity.DataUsageEntity)
 }
