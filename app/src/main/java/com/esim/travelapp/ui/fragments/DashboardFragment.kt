@@ -115,7 +115,6 @@ class DashboardFragment : Fragment() {
         val refreshLocationButton: Button = view.findViewById(R.id.refreshLocationButton)
         val buyPlanQuickButton: Button = view.findViewById(R.id.buyPlanQuickButton)
         val topUpQuickButton: Button = view.findViewById(R.id.topUpQuickButton)
-        val coverageQuickButton: Button = view.findViewById(R.id.coverageQuickButton)
         val supportQuickButton: Button = view.findViewById(R.id.supportQuickButton)
         val viewAllPlansButton: Button = view.findViewById(R.id.viewAllPlansButton)
 
@@ -126,9 +125,6 @@ class DashboardFragment : Fragment() {
         refreshLocationButton.setOnClickListener { detectUserLocation(view) }
         buyPlanQuickButton.setOnClickListener { navigateToStorefront() }
         topUpQuickButton.setOnClickListener { navigateToStorefront() }
-        coverageQuickButton.setOnClickListener {
-            Toast.makeText(requireContext(), "Opening coverage map", Toast.LENGTH_SHORT).show()
-        }
         supportQuickButton.setOnClickListener {
             startActivity(Intent(requireContext(), SupportActivity::class.java))
         }
