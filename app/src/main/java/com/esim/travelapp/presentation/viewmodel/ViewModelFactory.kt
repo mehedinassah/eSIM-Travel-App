@@ -45,7 +45,7 @@ class ViewModelFactory(
             modelClass.isAssignableFrom(NotificationViewModel::class.java) ->
                 NotificationViewModel(notificationRepository!!) as T
             modelClass.isAssignableFrom(PaymentViewModel::class.java) ->
-                PaymentViewModel(paymentRepository!!) as T
+                PaymentViewModel(paymentRepository!!, purchaseRepository!!) as T
             modelClass.isAssignableFrom(ESIMActivationViewModel::class.java) ->
                 ESIMActivationViewModel(activationRepository!!, dataUsageRepository!!) as T
             modelClass.isAssignableFrom(UserProfileViewModel::class.java) ->

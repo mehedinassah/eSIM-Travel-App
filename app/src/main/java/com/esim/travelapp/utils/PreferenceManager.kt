@@ -12,7 +12,6 @@ object PreferenceManager {
     private const val DATA_USAGE_TRACKING = "data_usage_tracking"
     private const val LANGUAGE_PREFERENCE = "language_preference"
     private const val LOCATION_PERMISSION_ASKED = "location_permission_asked"
-    private const val LOCATION_PERMISSION_TYPE = "location_permission_type"
 
     private fun getPreferences(context: Context): SharedPreferences {
         return context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
@@ -55,7 +54,6 @@ object PreferenceManager {
     fun resetLocationPermissions(context: Context) {
         getPreferences(context).edit().apply {
             remove(LOCATION_PERMISSION_ASKED)
-            remove(LOCATION_PERMISSION_TYPE)
             apply()
         }
     }
@@ -92,13 +90,5 @@ object PreferenceManager {
 
     fun hasLocationPermissionBeenAsked(context: Context): Boolean {
         return getPreferences(context).getBoolean(LOCATION_PERMISSION_ASKED, false)
-    }
-
-    fun setLocationPermissionType(context: Context, type: String) {
-        getPreferences(context).edit().putString(LOCATION_PERMISSION_TYPE, type).apply()
-    }
-
-    fun getLocationPermissionType(context: Context): String {
-        return getPreferences(context).getString(LOCATION_PERMISSION_TYPE, "") ?: ""
     }
 }

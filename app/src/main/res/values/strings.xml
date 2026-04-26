@@ -115,6 +115,8 @@
     <string name="status_failed">Status: Failed</string>
     <string name="confirm_activation">Confirm Activation</string>
     <string name="back_to_dashboard">Back to Dashboard</string>
+    <string name="notification_plan_activated_title">Plan Activated</string>
+    <string name="notification_plan_activated_message">Your %1$s has been activated successfully.</string>
     <string name="scan_qr_code">Scan the QR code with your device to activate the eSIM</string>
     <string name="installation_steps">Installation Steps</string>
     <string name="installation_instructions">1. Open your device settings\n2. Go to Cellular or Mobile Network\n3. Select Add Cellular Plan\n4. Scan the QR code above\n5. Follow the activation steps\n6. Your eSIM will be activated</string>

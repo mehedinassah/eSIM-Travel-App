@@ -11,6 +11,7 @@ import android.widget.Toast
 import android.content.Intent
 import android.Manifest
 import android.os.Build
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -30,6 +31,7 @@ import com.esim.travelapp.ui.support.SupportActivity
 import com.esim.travelapp.utils.LocationManager
 import com.esim.travelapp.utils.PreferenceManager
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -43,9 +45,28 @@ class DashboardFragment : Fragment() {
     private var currentUserId: Int = 0
     private lateinit var database: AppDatabase
     private var fragmentView: View? = null
-    
-    private companion object {
-        const val LOCATION_REQUEST_CODE = 100
+
+    private val locationPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val fineLocationGranted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false
+        val coarseLocationGranted = permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false
+        
+        if (fineLocationGranted || coarseLocationGranted) {
+            // Permission granted, detect location
+            fragmentView?.let { view ->
+                if (isAdded) {
+                    detectUserLocation(view)
+                }
+            }
+        } else {
+            // Permission denied, show default location
+            fragmentView?.let { view ->
+                if (isAdded) {
+                    detectUserLocation(view)
+                }
+            }
+        }
     }
 
     override fun onCreateView(
@@ -144,11 +165,13 @@ class DashboardFragment : Fragment() {
 
     private fun loadActivePlans(view: View) {
         val activePlansRecyclerView: RecyclerView = view.findViewById(R.id.activePlansRecyclerView)
+        val activePlanCountText: TextView = view.findViewById(R.id.activePlanCountText)
         val noActivePlansLayout: LinearLayout = view.findViewById(R.id.noActivePlansLayout)
 
         // Start in empty-state mode until data is loaded.
         noActivePlansLayout.visibility = View.VISIBLE
         activePlansRecyclerView.visibility = View.GONE
+        activePlanCountText.text = "0 active"
 
         activePlansRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         
@@ -169,17 +192,18 @@ class DashboardFragment : Fragment() {
 
         // Load purchases and enrich with plan details and data usage
         purchaseViewModel.getUserPurchases(currentUserId).asLiveData().observe(viewLifecycleOwner) { purchases ->
-            // Show only completed purchases as active plans
-            val activePurchases = purchases.filter { it.status == "completed" }
+            // Show only completed purchases that have an activated eSIM
+            val completedPurchases = purchases.filter { it.status == "completed" }
             
-            if (activePurchases.isEmpty()) {
+            if (completedPurchases.isEmpty()) {
                 noActivePlansLayout.visibility = View.VISIBLE
                 activePlansRecyclerView.visibility = View.GONE
+                activePlanCountText.text = "0 active"
             } else {
                 // Enrich purchases with plan details and usage data
-                CoroutineScope(Dispatchers.Main).launch {
+                viewLifecycleOwner.lifecycleScope.launch {
                     val displayModels = withContext(Dispatchers.IO) {
-                        activePurchases.mapNotNull { purchase ->
+                        completedPurchases.mapNotNull { purchase ->
                             try {
                                 // Get plan details
                                 val plan = database.esimPlanDao().getPlanById(purchase.planId)
@@ -188,8 +212,12 @@ class DashboardFragment : Fragment() {
                                 // Get activation for this purchase
                                 val activation = database.esimActivationDao().getActivationByPurchaseId(purchase.id)
 
+                                if (activation?.activationStatus != "activated") {
+                                    return@mapNotNull null
+                                }
+
                                 // Get data usage if activation exists
-                                val usage = activation?.let {
+                                val usage = activation.let {
                                     database.dataUsageDao().getUsageByActivationId(it.id)
                                 }
 
@@ -203,9 +231,11 @@ class DashboardFragment : Fragment() {
                     if (displayModels.isEmpty()) {
                         noActivePlansLayout.visibility = View.VISIBLE
                         activePlansRecyclerView.visibility = View.GONE
+                        activePlanCountText.text = "0 active"
                     } else {
                         noActivePlansLayout.visibility = View.GONE
                         activePlansRecyclerView.visibility = View.VISIBLE
+                        activePlanCountText.text = "${displayModels.size} active"
                         activePlanAdapter.submitList(displayModels)
                     }
                 }
@@ -268,13 +298,11 @@ class DashboardFragment : Fragment() {
                 detectUserLocation(view)
             } else {
                 // Request permission using Android's native system dialog
-                ActivityCompat.requestPermissions(
-                    requireActivity(),
+                locationPermissionLauncher.launch(
                     arrayOf(
                         Manifest.permission.ACCESS_FINE_LOCATION,
                         Manifest.permission.ACCESS_COARSE_LOCATION
-                    ),
-                    LOCATION_REQUEST_CODE
+                    )
                 )
             }
         } catch (e: Exception) {
@@ -282,39 +310,6 @@ class DashboardFragment : Fragment() {
             PreferenceManager.setLocationPermissionAsked(requireContext())
             if (isAdded && fragmentView != null) {
                 detectUserLocation(fragmentView!!)
-            }
-        }
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        
-        if (requestCode == LOCATION_REQUEST_CODE && isAdded) {
-            try {
-                if (grantResults.isNotEmpty() && grantResults[0] == android.content.pm.PackageManager.PERMISSION_GRANTED) {
-                    // Permission granted, detect location with a small delay
-                    fragmentView?.let { view ->
-                        // Small delay to ensure permission is properly processed
-                        view.postDelayed({
-                            if (isAdded && fragmentView != null) {
-                                detectUserLocation(view)
-                            }
-                        }, 300)
-                    }
-                } else {
-                    // Permission denied, show default location
-                    fragmentView?.let { view ->
-                        if (isAdded) {
-                            detectUserLocation(view)
-                        }
-                    }
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
             }
         }
     }

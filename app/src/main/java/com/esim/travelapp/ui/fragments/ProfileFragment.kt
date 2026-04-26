@@ -9,11 +9,16 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.esim.travelapp.R
+import com.esim.travelapp.data.local.AppDatabase
 import com.esim.travelapp.ui.auth.LoginActivity
 import com.esim.travelapp.ui.profile.EditProfileActivity
 import com.esim.travelapp.ui.profile.SettingsActivity
 import com.esim.travelapp.utils.PreferenceManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ProfileFragment : Fragment() {
 
@@ -41,10 +46,11 @@ class ProfileFragment : Fragment() {
 
         profileUserName.text = PreferenceManager.getUserName(requireContext())
         profileUserEmail.text = PreferenceManager.getUserEmail(requireContext())
-        // TODO: Load actual stats from database
         profileActivePlans.text = "0"
         profileTotalSpent.text = "$0"
         profileCountriesVisited.text = "0"
+
+        loadProfileStats(profileActivePlans, profileTotalSpent, profileCountriesVisited)
 
         // Menu options
         val wishlistMenu: LinearLayout = view.findViewById(R.id.wishlistMenuOption)
@@ -88,5 +94,54 @@ class ProfileFragment : Fragment() {
         val profileUserEmail: TextView? = view?.findViewById(R.id.profileUserEmail)
         profileUserName?.text = PreferenceManager.getUserName(requireContext())
         profileUserEmail?.text = PreferenceManager.getUserEmail(requireContext())
+
+        view?.let {
+            loadProfileStats(
+                it.findViewById(R.id.profileActivePlans),
+                it.findViewById(R.id.profileTotalSpent),
+                it.findViewById(R.id.profileCountriesVisited)
+            )
+        }
+    }
+
+    private fun loadProfileStats(
+        profileActivePlans: TextView,
+        profileTotalSpent: TextView,
+        profileCountriesVisited: TextView
+    ) {
+        val database = AppDatabase.getInstance(requireContext())
+
+        lifecycleScope.launch {
+            database.purchaseDao().getUserPurchases(currentUserId).collect { purchases ->
+                val stats = withContext(Dispatchers.IO) {
+                    var activeCount = 0
+                    var totalSpent = 0.0
+                    val countries = mutableSetOf<String>()
+
+                    purchases.forEach { purchase ->
+                        if (purchase.status == "completed") {
+                            val activation = database.esimActivationDao().getActivationByPurchaseId(purchase.id)
+                            if (activation?.activationStatus == "activated") {
+                                activeCount++
+                                val plan = database.esimPlanDao().getPlanById(purchase.planId)
+                                plan?.country?.let { countries.add(it) }
+                                val payment = database.paymentDao().getPaymentById(purchase.paymentId)
+                                if (payment != null) {
+                                    totalSpent += payment.amount
+                                } else {
+                                    plan?.price?.let { totalSpent += it }
+                                }
+                            }
+                        }
+                    }
+
+                    Triple(activeCount, totalSpent, countries.size)
+                }
+
+                profileActivePlans.text = stats.first.toString()
+                profileTotalSpent.text = "$${String.format("%.2f", stats.second)}"
+                profileCountriesVisited.text = stats.third.toString()
+            }
+        }
     }
 }

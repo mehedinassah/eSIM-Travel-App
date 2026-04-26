@@ -17,11 +17,12 @@ class PaymentConfirmationActivity : BaseActivity() {
         val purchaseId = intent.getIntExtra("purchase_id", 0)
         val amount = intent.getDoubleExtra("amount", 0.0)
         val dataAmount = intent.getStringExtra("data_amount") ?: "5GB"
+        val planName = intent.getStringExtra("plan_name") ?: "eSIM Plan"
 
-        setupUI(paymentId, amount, dataAmount, purchaseId)
+        setupUI(paymentId, amount, dataAmount, purchaseId, planName)
     }
 
-    private fun setupUI(paymentId: Int, amount: Double, dataAmount: String, purchaseId: Int) {
+    private fun setupUI(paymentId: Int, amount: Double, dataAmount: String, purchaseId: Int, planName: String) {
         val orderIdText: TextView = findViewById(R.id.orderIdText)
         val amountText: TextView = findViewById(R.id.amountText)
         val planText: TextView = findViewById(R.id.planText)
@@ -35,6 +36,7 @@ class PaymentConfirmationActivity : BaseActivity() {
             val activationIntent = Intent(this, ESIMActivationActivity::class.java)
             activationIntent.putExtra("purchase_id", purchaseId)
             activationIntent.putExtra("data_amount", dataAmount)
+            activationIntent.putExtra("plan_name", planName)
             startActivity(activationIntent)
             finish()
         }

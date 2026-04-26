@@ -60,7 +60,8 @@ class PaymentActivity : BaseActivity() {
     private fun setupViewModel() {
         val database = AppDatabase.getInstance(this)
         val paymentRepository = PaymentRepository(database.paymentDao())
-        val factory = ViewModelFactory(paymentRepository = paymentRepository)
+        val purchaseRepository = com.esim.travelapp.data.repository.PurchaseRepository(database.purchaseDao())
+        val factory = ViewModelFactory(paymentRepository = paymentRepository, purchaseRepository = purchaseRepository)
         paymentViewModel = ViewModelProvider(this, factory)[PaymentViewModel::class.java]
     }
 
@@ -157,6 +158,7 @@ class PaymentActivity : BaseActivity() {
                         confirmationIntent.putExtra("purchase_id", purchaseId)
                         confirmationIntent.putExtra("amount", amount)
                         confirmationIntent.putExtra("data_amount", dataAmount)
+                        confirmationIntent.putExtra("plan_name", planName)
                         startActivity(confirmationIntent)
                         finish()
                     }

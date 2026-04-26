@@ -110,7 +110,10 @@ class NotificationViewModel(private val notificationRepository: com.esim.travela
     fun getUserNotifications(userId: Int) = notificationRepository.getUserNotifications(userId)
 }
 
-class PaymentViewModel(private val paymentRepository: com.esim.travelapp.data.repository.PaymentRepository) : ViewModel() {
+class PaymentViewModel(
+    private val paymentRepository: com.esim.travelapp.data.repository.PaymentRepository,
+    private val purchaseRepository: com.esim.travelapp.data.repository.PurchaseRepository
+) : ViewModel() {
 
     private val _paymentState = MutableLiveData<PaymentState>()
     val paymentState: LiveData<PaymentState> = _paymentState
@@ -120,9 +123,14 @@ class PaymentViewModel(private val paymentRepository: com.esim.travelapp.data.re
         viewModelScope.launch {
             val result = paymentRepository.createPayment(userId, purchaseId, amount, paymentMethod, transactionRef)
             result.onSuccess { paymentId ->
-                // For testing: always succeed. In production, integrate real Stripe API
                 val updateResult = paymentRepository.updatePaymentStatus(paymentId, "completed")
                 updateResult.onSuccess {
+                    // Mark purchase completed once payment is confirmed
+                    purchaseRepository.updatePurchaseStatus(purchaseId, paymentId, "completed")
+                        .onFailure { purchaseError ->
+                            // Continue even if purchase status update fails, but log it
+                            android.util.Log.e("PaymentViewModel", "Failed to update purchase status: ${purchaseError.message}")
+                        }
                     _paymentState.value = PaymentState.Success(paymentId)
                 }.onFailure { error ->
                     _paymentState.value = PaymentState.Error(error.message ?: "Failed to update payment status")

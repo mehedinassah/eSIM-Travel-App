@@ -150,6 +150,15 @@
                 android:textStyle="bold"
                 android:textColor="@color/gray_900" />
 
+            <TextView
+                android:id="@+id/activePlanCountText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0 active"
+                android:textSize="12sp"
+                android:textColor="@color/gray_600"
+                android:layout_marginStart="12dp" />
+
             <View
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

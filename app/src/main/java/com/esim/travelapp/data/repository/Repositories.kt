@@ -100,6 +100,20 @@ class PurchaseRepository(private val purchaseDao: com.esim.travelapp.data.local.
             Result.failure(e)
         }
     }
+
+    suspend fun updatePurchaseStatus(purchaseId: Int, paymentId: Int, status: String): Result<Unit> {
+        return try {
+            val purchase = purchaseDao.getPurchaseById(purchaseId)
+            if (purchase != null) {
+                purchaseDao.updatePurchase(purchase.copy(paymentId = paymentId, status = status))
+                Result.success(Unit)
+            } else {
+                Result.failure(Exception("Purchase not found"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }
 
 class NotificationRepository(private val notificationDao: com.esim.travelapp.data.local.dao.NotificationDao) {

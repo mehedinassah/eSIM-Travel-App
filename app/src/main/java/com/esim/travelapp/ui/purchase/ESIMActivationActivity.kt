@@ -7,6 +7,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.esim.travelapp.R
 import com.esim.travelapp.data.local.AppDatabase
@@ -15,12 +16,15 @@ import com.esim.travelapp.data.repository.DataUsageRepository
 import com.esim.travelapp.presentation.viewmodel.ESIMActivationViewModel
 import com.esim.travelapp.presentation.viewmodel.ViewModelFactory
 import com.esim.travelapp.ui.BaseActivity
+import com.esim.travelapp.utils.PreferenceManager
+import kotlinx.coroutines.launch
 
 class ESIMActivationActivity : BaseActivity() {
 
     private lateinit var activationViewModel: ESIMActivationViewModel
     private var purchaseId: Int = 0
     private var dataAmount: String = ""
+    private var planName: String = ""
     private var activationId: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,6 +33,7 @@ class ESIMActivationActivity : BaseActivity() {
 
         purchaseId = intent.getIntExtra("purchase_id", 0)
         dataAmount = intent.getStringExtra("data_amount") ?: "5GB"
+        planName = intent.getStringExtra("plan_name") ?: "eSIM Plan"
 
         setupViewModel()
         setupUI()
@@ -73,7 +78,7 @@ class ESIMActivationActivity : BaseActivity() {
                     
                     iccidText.text = getString(R.string.iccid_label) + ": " + iccidValue
                     statusText.text = getString(R.string.pending_activation)
-                    
+                    activateButton.text = getString(R.string.confirm_activation)
                     activateButton.isEnabled = true
                 }
                 is com.esim.travelapp.presentation.viewmodel.ActivationState.Activated -> {
@@ -81,6 +86,19 @@ class ESIMActivationActivity : BaseActivity() {
                     activateButton.isEnabled = false
                     activateButton.text = getString(R.string.status_activated)
                     Toast.makeText(this, getString(R.string.esim_activated_successfully), Toast.LENGTH_SHORT).show()
+
+                    // Add a notification for the user when an eSIM is activated
+                    val database = AppDatabase.getInstance(this)
+                    val currentUserId = PreferenceManager.getUserId(this)
+                    val notification = com.esim.travelapp.data.local.entity.NotificationEntity(
+                        userId = currentUserId,
+                        title = getString(R.string.notification_plan_activated_title),
+                        message = getString(R.string.notification_plan_activated_message, planName),
+                        type = "activation"
+                    )
+                    lifecycleScope.launch {
+                        database.notificationDao().insertNotification(notification)
+                    }
                 }
                 is com.esim.travelapp.presentation.viewmodel.ActivationState.Error -> {
                     Toast.makeText(this, getString(R.string.error) + ": " + state.message, Toast.LENGTH_SHORT).show()
