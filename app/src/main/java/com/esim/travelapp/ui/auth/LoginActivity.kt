@@ -54,6 +54,18 @@ class LoginActivity : BaseActivity() {
                     loginButton.text = "Logging in..."
                 }
                 is com.esim.travelapp.presentation.viewmodel.AuthState.Success -> {
+                    // Save user data to preferences
+                    val user = authViewModel.currentUser.value
+                    if (user != null) {
+                        com.esim.travelapp.utils.PreferenceManager.saveUser(
+                            this,
+                            user.id,
+                            user.name,
+                            user.email
+                        )
+                        // Reset location permissions for new session
+                        com.esim.travelapp.utils.PreferenceManager.resetLocationPermissions(this)
+                    }
                     Toast.makeText(this, "Login successful!", Toast.LENGTH_SHORT).show()
                     navigateToMainActivity()
                 }

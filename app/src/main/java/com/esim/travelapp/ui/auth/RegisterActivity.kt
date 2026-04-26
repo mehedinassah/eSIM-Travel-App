@@ -59,6 +59,18 @@ class RegisterActivity : BaseActivity() {
                     registerButton.text = "Registering..."
                 }
                 is com.esim.travelapp.presentation.viewmodel.AuthState.Success -> {
+                    // Save user data to preferences
+                    val user = authViewModel.currentUser.value
+                    if (user != null) {
+                        com.esim.travelapp.utils.PreferenceManager.saveUser(
+                            this,
+                            user.id,
+                            user.name,
+                            user.email
+                        )
+                        // Reset location permissions for new account
+                        com.esim.travelapp.utils.PreferenceManager.resetLocationPermissions(this)
+                    }
                     Toast.makeText(this, "Registration successful!", Toast.LENGTH_SHORT).show()
                     navigateToMainActivity()
                 }

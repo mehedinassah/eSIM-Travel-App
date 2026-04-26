@@ -26,10 +26,10 @@ import com.esim.travelapp.presentation.viewmodel.PurchaseViewModel
 import com.esim.travelapp.presentation.viewmodel.ViewModelFactory
 import com.esim.travelapp.ui.adapter.ActivePlanAdapter
 import com.esim.travelapp.ui.adapter.ActivePlanDisplayModel
-import com.esim.travelapp.ui.dialogs.LocationPermissionDialog
 import com.esim.travelapp.ui.support.SupportActivity
 import com.esim.travelapp.utils.LocationManager
 import com.esim.travelapp.utils.PreferenceManager
+import androidx.core.content.ContextCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -68,9 +68,9 @@ class DashboardFragment : Fragment() {
         setupUI(view)
         loadActivePlans(view)
         
-        // Show location permission dialog on first login
+        // Request location permission on first login using Android's native system
         if (!PreferenceManager.hasLocationPermissionBeenAsked(requireContext())) {
-            showLocationPermissionDialog(view)
+            requestLocationPermission(view)
         } else {
             detectUserLocation(view)
         }
@@ -241,53 +241,49 @@ class DashboardFragment : Fragment() {
                     dashboardLocationText.text = "Enable location services"
                 }
             } else {
-                dashboardLocationText.text = "Location permission required"
+                dashboardLocationText.text = "🌍 USA"
+                locationDescriptionText.text = "Default location (enable location to personalize)"
+                // Save default location for user
+                locationViewModel.saveUserLocation(
+                    currentUserId,
+                    37.0902,
+                    -95.7129,
+                    "USA",
+                    "Default Location"
+                )
             }
         }
     }
 
-    private fun showLocationPermissionDialog(view: View) {
-        val dialog = LocationPermissionDialog(
-            requireContext()
-        ) { permissionType ->
-            // Mark that we've asked for location permission
+    private fun requestLocationPermission(view: View) {
+        try {
+            // Check if permission is already granted
+            if (ContextCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+            ) {
+                // Permission already granted
+                PreferenceManager.setLocationPermissionAsked(requireContext())
+                detectUserLocation(view)
+            } else {
+                // Request permission using Android's native system dialog
+                ActivityCompat.requestPermissions(
+                    requireActivity(),
+                    arrayOf(
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    ),
+                    LOCATION_REQUEST_CODE
+                )
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
             PreferenceManager.setLocationPermissionAsked(requireContext())
-            PreferenceManager.setLocationPermissionType(requireContext(), permissionType)
-            
-            when (permissionType) {
-                "PERMISSION_ALWAYS" -> {
-                    // Request always permission (Android 12+)
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                        ActivityCompat.requestPermissions(
-                            requireActivity(),
-                            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                            LOCATION_REQUEST_CODE
-                        )
-                    } else {
-                        ActivityCompat.requestPermissions(
-                            requireActivity(),
-                            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                            LOCATION_REQUEST_CODE
-                        )
-                    }
-                }
-                "PERMISSION_WHILE_USING" -> {
-                    // Request while using permission
-                    ActivityCompat.requestPermissions(
-                        requireActivity(),
-                        arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                        LOCATION_REQUEST_CODE
-                    )
-                }
-                "SKIP" -> {
-                    // User declined, show message
-                    val dashboardLocationText: TextView = view.findViewById(R.id.dashboardLocationText)
-                    dashboardLocationText.text = "Location disabled"
-                    Toast.makeText(requireContext(), "You can enable location in settings later", Toast.LENGTH_SHORT).show()
-                }
+            if (isAdded && fragmentView != null) {
+                detectUserLocation(fragmentView!!)
             }
         }
-        dialog.show()
     }
 
     override fun onRequestPermissionsResult(
@@ -297,18 +293,28 @@ class DashboardFragment : Fragment() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         
-        if (requestCode == LOCATION_REQUEST_CODE) {
-            if (grantResults.isNotEmpty() && grantResults[0] == android.content.pm.PackageManager.PERMISSION_GRANTED) {
-                // Permission granted, detect location with a small delay
-                fragmentView?.let { view ->
-                    // Small delay to ensure permission is properly processed
-                    view.postDelayed({
-                        detectUserLocation(view)
-                    }, 300)
+        if (requestCode == LOCATION_REQUEST_CODE && isAdded) {
+            try {
+                if (grantResults.isNotEmpty() && grantResults[0] == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                    // Permission granted, detect location with a small delay
+                    fragmentView?.let { view ->
+                        // Small delay to ensure permission is properly processed
+                        view.postDelayed({
+                            if (isAdded && fragmentView != null) {
+                                detectUserLocation(view)
+                            }
+                        }, 300)
+                    }
+                } else {
+                    // Permission denied, show default location
+                    fragmentView?.let { view ->
+                        if (isAdded) {
+                            detectUserLocation(view)
+                        }
+                    }
                 }
-            } else {
-                // Permission denied
-                Toast.makeText(requireContext(), "Location permission denied", Toast.LENGTH_SHORT).show()
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }
