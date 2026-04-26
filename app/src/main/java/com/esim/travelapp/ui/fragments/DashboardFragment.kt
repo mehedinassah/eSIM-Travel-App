@@ -30,6 +30,7 @@ import com.esim.travelapp.ui.adapter.ActivePlanDisplayModel
 import com.esim.travelapp.ui.support.SupportActivity
 import com.esim.travelapp.utils.LocationManager
 import com.esim.travelapp.utils.PreferenceManager
+import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.CoroutineScope
@@ -167,13 +168,21 @@ class DashboardFragment : Fragment() {
         val activePlansRecyclerView: RecyclerView = view.findViewById(R.id.activePlansRecyclerView)
         val activePlanCountText: TextView = view.findViewById(R.id.activePlanCountText)
         val noActivePlansLayout: LinearLayout = view.findViewById(R.id.noActivePlansLayout)
+        val activePlanSummaryCard: CardView = view.findViewById(R.id.activePlanSummaryCard)
+        val activePlanSummaryName: TextView = view.findViewById(R.id.activePlanSummaryName)
+        val activePlanSummaryData: TextView = view.findViewById(R.id.activePlanSummaryData)
+        val activePlanSummaryRemaining: TextView = view.findViewById(R.id.activePlanSummaryRemaining)
+        val activePlanSummaryProgress: ProgressBar = view.findViewById(R.id.activePlanSummaryProgress)
+        val activePlanSummaryValidity: TextView = view.findViewById(R.id.activePlanSummaryValidity)
 
         // Start in empty-state mode until data is loaded.
         noActivePlansLayout.visibility = View.VISIBLE
         activePlansRecyclerView.visibility = View.GONE
+        activePlanSummaryCard.visibility = View.GONE
         activePlanCountText.text = "0 active"
 
         activePlansRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        activePlansRecyclerView.setHasFixedSize(true)
         
         val activePlanAdapter = ActivePlanAdapter(
             onDetailsClick = { purchase ->
@@ -231,12 +240,35 @@ class DashboardFragment : Fragment() {
                     if (displayModels.isEmpty()) {
                         noActivePlansLayout.visibility = View.VISIBLE
                         activePlansRecyclerView.visibility = View.GONE
+                        activePlanSummaryCard.visibility = View.GONE
                         activePlanCountText.text = "0 active"
                     } else {
                         noActivePlansLayout.visibility = View.GONE
                         activePlansRecyclerView.visibility = View.VISIBLE
+                        activePlanSummaryCard.visibility = View.VISIBLE
                         activePlanCountText.text = "${displayModels.size} active"
-                        activePlanAdapter.submitList(displayModels)
+
+                        val firstPlan = displayModels.first()
+                        val usage = firstPlan.dataUsage
+                        val remainingPercent = if (usage != null && usage.dataTotal > 0) {
+                            ((usage.dataRemaining / usage.dataTotal) * 100).toInt().coerceIn(0, 100)
+                        } else {
+                            100
+                        }
+
+                        activePlanSummaryName.text = firstPlan.plan.planName
+                        activePlanSummaryData.text = "Data: ${firstPlan.plan.dataAmount}"
+                        activePlanSummaryRemaining.text = if (usage != null) {
+                            "${remainingPercent}% remaining (${String.format("%.1f", usage.dataRemaining)}/${String.format("%.1f", usage.dataTotal)} GB)"
+                        } else {
+                            "100% remaining (${firstPlan.plan.dataAmount})"
+                        }
+                        activePlanSummaryProgress.progress = remainingPercent
+                        activePlanSummaryValidity.text = "Validity: ${firstPlan.plan.validityDays} days"
+
+                        activePlanAdapter.submitList(displayModels) {
+                            activePlansRecyclerView.scrollToPosition(0)
+                        }
                     }
                 }
             }

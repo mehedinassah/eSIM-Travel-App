@@ -44,7 +44,55 @@
                 android:layout_height="wrap_content"
                 android:text="Just now"
                 android:textSize="@dimen/text_size_12"
-                android:textColor="@color/dark_gray" />
+                android:textColor="@color/dark_gray"
+                android:layout_marginBottom="@dimen/spacing_8" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="end"
+                android:spacing="@dimen/spacing_8">
+
+                <Button
+                    android:id="@+id/markReadButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Mark Read"
+                    android:textSize="@dimen/text_size_12"
+                    android:paddingStart="@dimen/spacing_8"
+                    android:paddingEnd="@dimen/spacing_8"
+                    android:paddingTop="@dimen/spacing_4"
+                    android:paddingBottom="@dimen/spacing_4"
+                    android:background="?attr/selectableItemBackground"
+                    android:layout_marginEnd="@dimen/spacing_8" />
+
+                <Button
+                    android:id="@+id/archiveButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Archive"
+                    android:textSize="@dimen/text_size_12"
+                    android:paddingStart="@dimen/spacing_8"
+                    android:paddingEnd="@dimen/spacing_8"
+                    android:paddingTop="@dimen/spacing_4"
+                    android:paddingBottom="@dimen/spacing_4"
+                    android:background="?attr/selectableItemBackground"
+                    android:layout_marginEnd="@dimen/spacing_8" />
+
+                <Button
+                    android:id="@+id/deleteButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Delete"
+                    android:textSize="@dimen/text_size_12"
+                    android:paddingStart="@dimen/spacing_8"
+                    android:paddingEnd="@dimen/spacing_8"
+                    android:paddingTop="@dimen/spacing_4"
+                    android:paddingBottom="@dimen/spacing_4"
+                    android:background="?attr/selectableItemBackground" />
+
+            </LinearLayout>
 
         </LinearLayout>
 

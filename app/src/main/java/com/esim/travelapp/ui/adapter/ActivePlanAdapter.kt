@@ -78,16 +78,12 @@ class ActivePlanAdapter(
 
             // Display data usage if available
             if (usage != null) {
-                dataUsageText?.text = "${String.format("%.1f", usage.dataUsed)}/${String.format("%.1f", usage.dataTotal)} GB"
-                val usagePercent = if (usage.dataTotal > 0) {
-                    ((usage.dataUsed / usage.dataTotal) * 100).toInt()
-                } else {
-                    0
-                }
-                dataUsageProgressBar?.progress = usagePercent.coerceIn(0, 100)
+                val remainingPercent = ((usage.dataRemaining / usage.dataTotal) * 100).toInt()
+                dataUsageText?.text = "${remainingPercent}% remaining (${String.format("%.1f", usage.dataRemaining)}/${String.format("%.1f", usage.dataTotal)} GB)"
+                dataUsageProgressBar?.progress = remainingPercent.coerceIn(0, 100)
             } else {
-                dataUsageText?.text = "0/${plan.dataAmount}"
-                dataUsageProgressBar?.progress = 0
+                dataUsageText?.text = "100% remaining (${plan.dataAmount})"
+                dataUsageProgressBar?.progress = 100
             }
 
             detailsButton.setOnClickListener {

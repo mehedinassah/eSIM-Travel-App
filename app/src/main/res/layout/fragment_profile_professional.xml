@@ -53,7 +53,16 @@
                     android:text="user@example.com"
                     android:textSize="13sp"
                     android:textColor="@color/white"
-                    android:alpha="0.9" />
+                    android:alpha="0.9"
+                    android:layout_marginBottom="4dp" />
+                <TextView
+                    android:id="@+id/profileMemberSince"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Member since Jan 1, 2024"
+                    android:textSize="11sp"
+                    android:textColor="@color/white"
+                    android:alpha="0.8" />
             </LinearLayout>
         </LinearLayout>
 

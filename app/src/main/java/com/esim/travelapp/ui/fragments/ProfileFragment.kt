@@ -40,6 +40,7 @@ class ProfileFragment : Fragment() {
         // Profile header info
         val profileUserName: TextView = view.findViewById(R.id.profileUserName)
         val profileUserEmail: TextView = view.findViewById(R.id.profileUserEmail)
+        val profileMemberSince: TextView = view.findViewById(R.id.profileMemberSince)
         val profileActivePlans: TextView = view.findViewById(R.id.profileActivePlans)
         val profileTotalSpent: TextView = view.findViewById(R.id.profileTotalSpent)
         val profileCountriesVisited: TextView = view.findViewById(R.id.profileCountriesVisited)
@@ -50,6 +51,7 @@ class ProfileFragment : Fragment() {
         profileTotalSpent.text = "$0"
         profileCountriesVisited.text = "0"
 
+        loadMemberSinceDate(profileMemberSince)
         loadProfileStats(profileActivePlans, profileTotalSpent, profileCountriesVisited)
 
         // Menu options
@@ -101,6 +103,20 @@ class ProfileFragment : Fragment() {
                 it.findViewById(R.id.profileTotalSpent),
                 it.findViewById(R.id.profileCountriesVisited)
             )
+        }
+    }
+
+    private fun loadMemberSinceDate(profileMemberSince: TextView) {
+        val database = AppDatabase.getInstance(requireContext())
+        lifecycleScope.launch {
+            val user = withContext(Dispatchers.IO) {
+                database.userDao().getUserById(currentUserId)
+            }
+            if (user != null) {
+                val sdf = java.text.SimpleDateFormat("MMM d, yyyy", java.util.Locale.getDefault())
+                val formattedDate = sdf.format(java.util.Date(user.createdAt))
+                profileMemberSince.text = "Member since $formattedDate"
+            }
         }
     }
 

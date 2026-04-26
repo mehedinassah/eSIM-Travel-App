@@ -57,6 +57,9 @@ interface PurchaseDao {
     @Query("SELECT * FROM purchases WHERE userId = :userId")
     fun getUserPurchases(userId: Int): Flow<List<com.esim.travelapp.data.local.entity.PurchaseEntity>>
 
+    @Query("SELECT * FROM purchases")
+    fun getAllPurchasesSync(): List<com.esim.travelapp.data.local.entity.PurchaseEntity>?
+
     @Query("SELECT * FROM purchases WHERE id = :purchaseId LIMIT 1")
     suspend fun getPurchaseById(purchaseId: Int): com.esim.travelapp.data.local.entity.PurchaseEntity?
 
@@ -77,6 +80,9 @@ interface NotificationDao {
 
     @Query("UPDATE notifications SET isRead = 1 WHERE userId = :userId")
     suspend fun markAllAsRead(userId: Int)
+
+    @Query("DELETE FROM notifications WHERE id = :notificationId")
+    suspend fun deleteNotification(notificationId: Int)
 
     @Query("DELETE FROM notifications WHERE userId = :userId")
     suspend fun clearAllNotifications(userId: Int)

@@ -122,6 +122,18 @@ class NotificationRepository(private val notificationDao: com.esim.travelapp.dat
     suspend fun addNotification(notification: com.esim.travelapp.data.local.entity.NotificationEntity) {
         notificationDao.insertNotification(notification)
     }
+
+    suspend fun markAsRead(notificationId: Int) {
+        notificationDao.markAsRead(notificationId)
+    }
+
+    suspend fun deleteNotification(notificationId: Int) {
+        notificationDao.deleteNotification(notificationId)
+    }
+
+    suspend fun clearAllNotifications(userId: Int) {
+        notificationDao.clearAllNotifications(userId)
+    }
 }
 
 class PaymentRepository(private val paymentDao: com.esim.travelapp.data.local.dao.PaymentDao) {

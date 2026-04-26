@@ -12,7 +12,8 @@ import com.esim.travelapp.ui.fragments.ProfileFragment
 import com.esim.travelapp.ui.fragments.StorefrontEnhancedFragment
 import com.google.firebase.FirebaseApp
 import com.google.firebase.messaging.FirebaseMessaging
-
+import android.content.Intent
+import com.esim.travelapp.service.DataUsageService
 
 class MainActivity : BaseActivity() {
 
@@ -24,6 +25,9 @@ class MainActivity : BaseActivity() {
         
         // Initialize Firebase
         FirebaseApp.initializeApp(this)
+        
+        // Start data usage simulation service
+        startService(Intent(this, DataUsageService::class.java))
         
         // Get FCM Token
         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->

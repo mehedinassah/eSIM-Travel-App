@@ -54,7 +54,11 @@ class PlanAdapter(private val onPlanClick: (ESIMPlanEntity) -> Unit) :
     }
 }
 
-class NotificationAdapter :
+class NotificationAdapter(
+    private val onMarkRead: (Long) -> Unit = {},
+    private val onArchive: (Long) -> Unit = {},
+    private val onDelete: (Long) -> Unit = {}
+) :
     ListAdapter<com.esim.travelapp.data.local.entity.NotificationEntity, NotificationAdapter.NotificationViewHolder>(
         DiffCallback()
     ) {
@@ -66,18 +70,49 @@ class NotificationAdapter :
     }
 
     override fun onBindViewHolder(holder: NotificationViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        holder.bind(getItem(position), onMarkRead, onArchive, onDelete)
     }
 
     class NotificationViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val titleText: TextView = itemView.findViewById(R.id.titleText)
         private val messageText: TextView = itemView.findViewById(R.id.messageText)
         private val timeText: TextView = itemView.findViewById(R.id.timeText)
+        private val markReadButton: Button = itemView.findViewById(R.id.markReadButton)
+        private val archiveButton: Button = itemView.findViewById(R.id.archiveButton)
+        private val deleteButton: Button = itemView.findViewById(R.id.deleteButton)
 
-        fun bind(notification: com.esim.travelapp.data.local.entity.NotificationEntity) {
+        fun bind(
+            notification: com.esim.travelapp.data.local.entity.NotificationEntity,
+            onMarkRead: (Long) -> Unit,
+            onArchive: (Long) -> Unit,
+            onDelete: (Long) -> Unit
+        ) {
             titleText.text = notification.title
             messageText.text = notification.message
             timeText.text = formatTime(notification.createdAt)
+
+            // Update button text based on isRead status
+            if (notification.isRead) {
+                markReadButton.text = "✓ Read"
+                markReadButton.isEnabled = false
+                markReadButton.alpha = 0.5f
+            } else {
+                markReadButton.text = "✓ Mark Read"
+                markReadButton.isEnabled = true
+                markReadButton.alpha = 1.0f
+            }
+
+            markReadButton.setOnClickListener {
+                onMarkRead(notification.id.toLong())
+            }
+
+            archiveButton.setOnClickListener {
+                onArchive(notification.id.toLong())
+            }
+
+            deleteButton.setOnClickListener {
+                onDelete(notification.id.toLong())
+            }
         }
 
         private fun formatTime(timestamp: Long): String {
@@ -104,7 +139,10 @@ class NotificationAdapter :
     }
 }
 
-class PurchaseHistoryAdapter :
+class PurchaseHistoryAdapter(
+    private val onGetPlanName: suspend (Int) -> String? = { null },
+    private val onGetPaymentAmount: suspend (Int) -> Double? = { null }
+) :
     ListAdapter<com.esim.travelapp.data.local.entity.PurchaseEntity, PurchaseHistoryAdapter.PurchaseViewHolder>(
         DiffCallback()
     ) {
@@ -116,7 +154,7 @@ class PurchaseHistoryAdapter :
     }
 
     override fun onBindViewHolder(holder: PurchaseViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        holder.bind(getItem(position), onGetPlanName, onGetPaymentAmount)
     }
 
     class PurchaseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -125,10 +163,16 @@ class PurchaseHistoryAdapter :
         private val statusText: TextView = itemView.findViewById(R.id.statusText)
         private val priceText: TextView = itemView.findViewById(R.id.priceText)
 
-        fun bind(purchase: com.esim.travelapp.data.local.entity.PurchaseEntity) {
-            planNameText.text = "Purchase #${purchase.id}"
+        fun bind(
+            purchase: com.esim.travelapp.data.local.entity.PurchaseEntity,
+            onGetPlanName: suspend (Int) -> String?,
+            onGetPaymentAmount: suspend (Int) -> Double?
+        ) {
             dateText.text = formatDate(purchase.purchaseDate)
             statusText.text = "Status: ${purchase.status.uppercase()}"
+            
+            // Set defaults
+            planNameText.text = "Purchase #${purchase.id}"
             priceText.text = "Pending amount"
         }
 
