@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -132,8 +133,11 @@
             android:text="Confirm Activation"
             android:textSize="@dimen/text_size_18"
             android:padding="@dimen/spacing_16"
-            android:background="@color/primary"
+            android:background="@drawable/button_primary_bg"
+            android:backgroundTint="@null"
+            app:backgroundTint="@null"
             android:textColor="@color/white"
+            android:textAllCaps="false"
             android:layout_marginBottom="@dimen/spacing_12" />
 
         <Button
@@ -143,8 +147,9 @@
             android:text="Back to Dashboard"
             android:textSize="@dimen/text_size_18"
             android:padding="@dimen/spacing_16"
-            android:background="@color/light_gray"
-            android:textColor="@color/primary" />
+            android:background="@drawable/button_outline_bg"
+            android:textColor="@color/primary"
+            android:textAllCaps="false" />
     </LinearLayout>
 
 </LinearLayout>

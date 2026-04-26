@@ -22,6 +22,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.esim.travelapp.R
 import com.esim.travelapp.data.local.AppDatabase
+import com.esim.travelapp.data.local.entity.ESIMActivationEntity
+import com.esim.travelapp.data.local.entity.ESIMPlanEntity
+import com.esim.travelapp.data.local.entity.PurchaseEntity
 import com.esim.travelapp.data.repository.LocationRepository
 import com.esim.travelapp.data.repository.PurchaseRepository
 import com.esim.travelapp.presentation.viewmodel.LocationViewModel
@@ -49,7 +52,6 @@ class DashboardFragment : Fragment() {
     private var fragmentView: View? = null
     private var usageObserverJob: Job? = null
 
-    // Summary card views kept as fields for live updates
     private var activePlanSummaryCard: CardView? = null
     private var activePlanSummaryName: TextView? = null
     private var activePlanSummaryData: TextView? = null
@@ -61,17 +63,20 @@ class DashboardFragment : Fragment() {
     private var activePlansRecyclerView: RecyclerView? = null
     private var activePlanAdapter: ActivePlanAdapter? = null
 
+    // Holds all active plan info for aggregate calculations
+    private data class ActivePlanInfo(
+        val purchase: PurchaseEntity,
+        val plan: ESIMPlanEntity,
+        val activation: ESIMActivationEntity?
+    )
+
     private val locationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { _ ->
         fragmentView?.let { if (isAdded) detectUserLocation(it) }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_dashboard_professional, container, false)
     }
 
@@ -101,10 +106,7 @@ class DashboardFragment : Fragment() {
     private fun setupViewModel() {
         val purchaseRepository = PurchaseRepository(database.purchaseDao())
         val locationRepository = LocationRepository(database.locationDao())
-        val factory = ViewModelFactory(
-            purchaseRepository = purchaseRepository,
-            locationRepository = locationRepository
-        )
+        val factory = ViewModelFactory(purchaseRepository = purchaseRepository, locationRepository = locationRepository)
         purchaseViewModel = ViewModelProvider(this, factory).get(PurchaseViewModel::class.java)
         locationViewModel = ViewModelProvider(this, factory).get(LocationViewModel::class.java)
     }
@@ -139,17 +141,16 @@ class DashboardFragment : Fragment() {
     }
 
     private fun loadActivePlans(view: View) {
-        activePlansRecyclerView   = view.findViewById(R.id.activePlansRecyclerView)
-        activePlanCountText       = view.findViewById(R.id.activePlanCountText)
-        noActivePlansLayout       = view.findViewById(R.id.noActivePlansLayout)
-        activePlanSummaryCard     = view.findViewById(R.id.activePlanSummaryCard)
-        activePlanSummaryName     = view.findViewById(R.id.activePlanSummaryName)
-        activePlanSummaryData     = view.findViewById(R.id.activePlanSummaryData)
+        activePlansRecyclerView    = view.findViewById(R.id.activePlansRecyclerView)
+        activePlanCountText        = view.findViewById(R.id.activePlanCountText)
+        noActivePlansLayout        = view.findViewById(R.id.noActivePlansLayout)
+        activePlanSummaryCard      = view.findViewById(R.id.activePlanSummaryCard)
+        activePlanSummaryName      = view.findViewById(R.id.activePlanSummaryName)
+        activePlanSummaryData      = view.findViewById(R.id.activePlanSummaryData)
         activePlanSummaryRemaining = view.findViewById(R.id.activePlanSummaryRemaining)
-        activePlanSummaryProgress = view.findViewById(R.id.activePlanSummaryProgress)
+        activePlanSummaryProgress  = view.findViewById(R.id.activePlanSummaryProgress)
         activePlanSummaryValidity  = view.findViewById(R.id.activePlanSummaryValidity)
 
-        // Default: show empty state
         showEmptyState()
 
         activePlansRecyclerView?.layoutManager =
@@ -166,101 +167,113 @@ class DashboardFragment : Fragment() {
 
         purchaseViewModel.getUserPurchases(currentUserId).asLiveData()
             .observe(viewLifecycleOwner) { purchases ->
-                // Show ALL completed purchases — no activation gate
                 val completedPurchases = purchases.filter { it.status == "completed" }
-
                 if (completedPurchases.isEmpty()) {
                     showEmptyState()
                     return@observe
                 }
 
                 viewLifecycleOwner.lifecycleScope.launch {
-                    val displayModels = withContext(Dispatchers.IO) {
+                    val activePlanInfoList = withContext(Dispatchers.IO) {
                         completedPurchases.mapNotNull { purchase ->
                             try {
                                 val plan = database.esimPlanDao().getPlanById(purchase.planId)
                                     ?: return@mapNotNull null
-
-                                // Try to get activation & usage — but don't gate on it
                                 val activation = database.esimActivationDao()
                                     .getActivationByPurchaseId(purchase.id)
-                                val usage = activation?.let {
-                                    database.dataUsageDao().getUsageByActivationId(it.id)
-                                }
-
-                                ActivePlanDisplayModel(purchase, plan, usage)
-                            } catch (e: Exception) {
-                                null
-                            }
+                                ActivePlanInfo(purchase, plan, activation)
+                            } catch (e: Exception) { null }
                         }
                     }
 
-                    if (displayModels.isEmpty()) {
+                    if (activePlanInfoList.isEmpty()) {
                         showEmptyState()
                         return@launch
                     }
 
-                    // Show the list
+                    // Build display models for the horizontal list
+                    val displayModels = withContext(Dispatchers.IO) {
+                        activePlanInfoList.map { info ->
+                            val usage = info.activation?.let {
+                                database.dataUsageDao().getUsageByActivationId(it.id)
+                            }
+                            ActivePlanDisplayModel(info.purchase, info.plan, usage)
+                        }
+                    }
+
                     showActivePlans(displayModels)
 
-                    // Live-observe usage for the first plan's summary card
-                    val firstActivation = withContext(Dispatchers.IO) {
-                        database.esimActivationDao()
-                            .getActivationByPurchaseId(displayModels.first().purchase.id)
-                    }
-
-                    if (firstActivation != null) {
-                        startLiveUsageObserver(firstActivation.id, displayModels.first())
-                    } else {
-                        // No activation record yet — just show plan info without usage
-                        val first = displayModels.first()
-                        activePlanSummaryName?.text     = first.plan.planName
-                        activePlanSummaryData?.text     = "Data: ${first.plan.dataAmount}"
-                        activePlanSummaryRemaining?.text = "100% remaining (${first.plan.dataAmount})"
-                        activePlanSummaryProgress?.progress = 100
-                        activePlanSummaryValidity?.text = "Validity: ${first.plan.validityDays} days"
-                        activePlanSummaryCard?.visibility = View.VISIBLE
-                    }
+                    // Start aggregate live observer
+                    val activationIds = activePlanInfoList.mapNotNull { it.activation?.id }
+                    startAggregateUsageObserver(activePlanInfoList, activationIds)
                 }
             }
     }
 
     /**
-     * Observes DataUsageEntity via Flow so the summary card updates in real-time
-     * every second as DataUsageService writes to the DB.
+     * Observes ALL active plans' data usage simultaneously.
+     * Summary card shows:
+     *  - Total data = sum of all plan dataTotal
+     *  - Remaining = sum of all dataRemaining (live, decreases 1%/sec per plan)
+     *  - Validity = max validityDays across all plans
+     *  - Progress bar = combined remaining %
      */
-    private fun startLiveUsageObserver(
-        activationId: Int,
-        primaryModel: ActivePlanDisplayModel
+    private fun startAggregateUsageObserver(
+        planInfoList: List<ActivePlanInfo>,
+        activationIds: List<Int>
     ) {
         usageObserverJob?.cancel()
+
+        // Aggregate plan-level data (doesn't change)
+        val totalPlanGB = planInfoList.sumOf { extractGB(it.plan.dataAmount) }
+        val maxValidity = planInfoList.maxOf { it.plan.validityDays }
+        val planCount = planInfoList.size
+
+        // Update static fields immediately
+        activePlanSummaryName?.text = if (planCount == 1)
+            planInfoList.first().plan.planName
+        else
+            "$planCount Active Plans"
+        activePlanSummaryData?.text = "Total Data: ${formatGB(totalPlanGB)}"
+        activePlanSummaryValidity?.text = "Max Validity: $maxValidity days"
+        activePlanSummaryCard?.visibility = View.VISIBLE
+
+        if (activationIds.isEmpty()) {
+            // No activations yet — show 100%
+            activePlanSummaryRemaining?.text = "100% remaining (${formatGB(totalPlanGB)} / ${formatGB(totalPlanGB)})"
+            activePlanSummaryProgress?.progress = 100
+            return
+        }
+
         usageObserverJob = viewLifecycleOwner.lifecycleScope.launch {
             database.dataUsageDao()
-                .observeUsageByActivationId(activationId)
-                .collectLatest { usage ->
-                    val plan = primaryModel.plan
-                    val remainingPercent = if (usage != null && usage.dataTotal > 0) {
-                        ((usage.dataRemaining / usage.dataTotal) * 100).toInt().coerceIn(0, 100)
-                    } else 100
+                .observeUsageForActivations(activationIds)
+                .collectLatest { usageList ->
+                    val totalRemaining = usageList.sumOf { it.dataRemaining }
+                    val totalCapacity  = usageList.sumOf { it.dataTotal }
+                        .takeIf { it > 0.0 } ?: totalPlanGB
 
-                    activePlanSummaryName?.text = plan.planName
-                    activePlanSummaryData?.text = "Data: ${plan.dataAmount}"
-                    activePlanSummaryRemaining?.text = if (usage != null) {
+                    val remainingPercent = ((totalRemaining / totalCapacity) * 100)
+                        .toInt().coerceIn(0, 100)
+
+                    activePlanSummaryRemaining?.text =
                         "${remainingPercent}% remaining  " +
-                        "(${String.format("%.2f", usage.dataRemaining)} / " +
-                        "${String.format("%.2f", usage.dataTotal)} GB)"
-                    } else {
-                        "100% remaining (${plan.dataAmount})"
-                    }
+                        "(${formatGB(totalRemaining)} / ${formatGB(totalCapacity)})"
                     activePlanSummaryProgress?.progress = remainingPercent
-                    activePlanSummaryValidity?.text = "Validity: ${plan.validityDays} days"
-                    activePlanSummaryCard?.visibility = View.VISIBLE
                 }
         }
     }
 
+    private fun extractGB(dataAmount: String): Double {
+        val regex = Regex("([0-9]+(?:\\.[0-9]+)?)")
+        return regex.find(dataAmount)?.groupValues?.get(1)?.toDoubleOrNull() ?: 0.0
+    }
+
+    private fun formatGB(gb: Double): String =
+        if (gb == gb.toLong().toDouble()) "${gb.toLong()} GB" else String.format("%.2f GB", gb)
+
     private fun showActivePlans(models: List<ActivePlanDisplayModel>) {
-        noActivePlansLayout?.visibility   = View.GONE
+        noActivePlansLayout?.visibility    = View.GONE
         activePlansRecyclerView?.visibility = View.VISIBLE
         activePlanCountText?.text = "${models.size} active"
         activePlanAdapter?.submitList(models) {
@@ -279,7 +292,6 @@ class DashboardFragment : Fragment() {
         val dashboardLocationText: TextView = view.findViewById(R.id.dashboardLocationText)
         val locationDescriptionText: TextView = view.findViewById(R.id.locationDescriptionText)
         dashboardLocationText.text = "Detecting location..."
-
         CoroutineScope(Dispatchers.Main).launch {
             if (locationManager.hasLocationPermission()) {
                 val location = locationManager.getLastLocation()

@@ -89,21 +89,17 @@ class DataUsageService : Service() {
 
     private suspend fun checkAutoRenewal(purchase: PurchaseEntity, usage: com.esim.travelapp.data.local.entity.DataUsageEntity) {
         try {
-            // Get auto-renewal settings for this plan
             val autoRenewal = database.autoRenewalDao().getAutoRenewal(purchase.userId, purchase.planId)
 
-            if (autoRenewal?.isEnabled == true) {
-                val remainingPercent = (usage.dataRemaining / usage.dataTotal) * 100.0
+            // Only proceed if the user has explicitly enabled auto-renewal with a threshold
+            if (autoRenewal == null || !autoRenewal.isEnabled || autoRenewal.renewalThreshold <= 0) return
 
-                if (remainingPercent <= autoRenewal.renewalThreshold) {
-                    // Check if we haven't renewed recently (prevent spam)
-                    val lastRenewal = autoRenewal.lastRenewalDate ?: 0
-                    val timeSinceLastRenewal = System.currentTimeMillis() - lastRenewal
+            val remainingPercent = (usage.dataRemaining / usage.dataTotal) * 100.0
 
-                    // Only renew if it's been at least 1 minute since last renewal
-                    if (timeSinceLastRenewal > 60000) {
-                        performAutoRenewal(purchase, autoRenewal)
-                    }
+            if (remainingPercent <= autoRenewal.renewalThreshold) {
+                val timeSinceLastRenewal = System.currentTimeMillis() - (autoRenewal.lastRenewalDate ?: 0)
+                if (timeSinceLastRenewal > 60000) {
+                    performAutoRenewal(purchase, autoRenewal)
                 }
             }
         } catch (e: Exception) {
@@ -156,8 +152,8 @@ class DataUsageService : Service() {
             // Send notification about auto-renewal
             val notification = NotificationEntity(
                 userId = purchase.userId,
-                title = "Plan Auto-Renewed",
-                message = "${plan.planName} has been automatically renewed. Your data has been topped up!",
+                title = "✅ Plan Auto-Renewed",
+                message = "${plan.planName} was automatically renewed because your data dropped to ${String.format("%.0f", autoRenewal.renewalThreshold)}% or below. Your data has been fully topped up to ${plan.dataAmount}.",
                 type = "activation"
             )
             database.notificationDao().insertNotification(notification)
