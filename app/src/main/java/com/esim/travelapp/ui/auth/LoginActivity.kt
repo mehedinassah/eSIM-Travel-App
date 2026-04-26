@@ -2,10 +2,13 @@ package com.esim.travelapp.ui.auth
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
 import com.esim.travelapp.R
 import com.esim.travelapp.data.local.AppDatabase
 import com.esim.travelapp.data.repository.AuthRepository
@@ -14,6 +17,9 @@ import com.esim.travelapp.presentation.viewmodel.ViewModelFactory
 import com.esim.travelapp.ui.BaseActivity
 import com.esim.travelapp.ui.main.MainActivity
 import com.esim.travelapp.utils.ValidationUtils
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class LoginActivity : BaseActivity() {
 
@@ -29,7 +35,7 @@ class LoginActivity : BaseActivity() {
         setContentView(R.layout.activity_login)
 
         initializeViews()
-        setupViewModel()
+        setupViewModelAsync()   // non-blocking init
         setupListeners()
     }
 
@@ -41,12 +47,21 @@ class LoginActivity : BaseActivity() {
         forgotPasswordLink = findViewById(R.id.forgotPasswordLink)
     }
 
-    private fun setupViewModel() {
-        val database = AppDatabase.getInstance(this)
-        val authRepository = AuthRepository(database.userDao())
-        val factory = ViewModelFactory(authRepository = authRepository)
-        authViewModel = factory.create(AuthViewModel::class.java)
+    private fun setupViewModelAsync() {
+        loginButton.isEnabled = false   // disable until VM is ready
+        lifecycleScope.launch {
+            val database = withContext(Dispatchers.IO) {
+                AppDatabase.getInstance(applicationContext)
+            }
+            val authRepository = AuthRepository(database.userDao())
+            val factory = ViewModelFactory(authRepository = authRepository)
+            authViewModel = factory.create(AuthViewModel::class.java)
+            loginButton.isEnabled = true
+            observeLoginState()
+        }
+    }
 
+    private fun observeLoginState() {
         authViewModel.loginState.observe(this) { state ->
             when (state) {
                 is com.esim.travelapp.presentation.viewmodel.AuthState.Loading -> {
@@ -54,16 +69,9 @@ class LoginActivity : BaseActivity() {
                     loginButton.text = "Logging in..."
                 }
                 is com.esim.travelapp.presentation.viewmodel.AuthState.Success -> {
-                    // Save user data to preferences
                     val user = authViewModel.currentUser.value
                     if (user != null) {
-                        com.esim.travelapp.utils.PreferenceManager.saveUser(
-                            this,
-                            user.id,
-                            user.name,
-                            user.email
-                        )
-                        // Reset location permissions for new session
+                        com.esim.travelapp.utils.PreferenceManager.saveUser(this, user.id, user.name, user.email)
                         com.esim.travelapp.utils.PreferenceManager.resetLocationPermissions(this)
                     }
                     Toast.makeText(this, "Login successful!", Toast.LENGTH_SHORT).show()

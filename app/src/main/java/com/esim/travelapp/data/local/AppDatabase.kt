@@ -4,6 +4,9 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import com.esim.travelapp.data.local.dao.ESIMPlanDao
 import com.esim.travelapp.data.local.dao.NotificationDao
 import com.esim.travelapp.data.local.dao.PurchaseDao
@@ -87,7 +90,7 @@ abstract class AppDatabase : RoomDatabase() {
             }
 
         private fun seedDatabase(database: AppDatabase) {
-            Thread {
+            GlobalScope.launch(Dispatchers.IO) {
                 val existingCount = database.esimPlanDao().getAllPlansSync()?.size ?: 0
                 if (existingCount == 0) {
                     val plans = listOf(
@@ -113,7 +116,7 @@ abstract class AppDatabase : RoomDatabase() {
                         database.esimPlanDao().insertSync(plan)
                     }
                 }
-            }.start()
+            }
         }
     }
 }
