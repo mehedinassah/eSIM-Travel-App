@@ -126,30 +126,33 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/activateButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Confirm Activation"
             android:textSize="@dimen/text_size_18"
             android:padding="@dimen/spacing_16"
-            android:background="@drawable/button_primary_bg"
-            android:backgroundTint="@null"
-            app:backgroundTint="@null"
             android:textColor="@color/white"
             android:textAllCaps="false"
+            app:backgroundTint="@color/primary"
+            app:cornerRadius="12dp"
             android:layout_marginBottom="@dimen/spacing_12" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/backToDashboardButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Back to Dashboard"
             android:textSize="@dimen/text_size_18"
             android:padding="@dimen/spacing_16"
-            android:background="@drawable/button_outline_bg"
             android:textColor="@color/primary"
-            android:textAllCaps="false" />
+            android:textAllCaps="false"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            app:strokeColor="@color/primary"
+            app:strokeWidth="2dp"
+            app:backgroundTint="@android:color/transparent"
+            app:cornerRadius="12dp" />
     </LinearLayout>
 
 </LinearLayout>
