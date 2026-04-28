@@ -44,3 +44,10 @@ out/
 
 # Local configuration file
 local.properties
+
+# Build logs and temporary files
+build_*.txt
+gradle_errors.txt
+xmlfiles.txt
+search_ampersands.ps1
+restore-gradle.bat
