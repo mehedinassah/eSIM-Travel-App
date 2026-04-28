@@ -50,11 +50,9 @@ ChatGPT was utilized for:
 - Generating code explanations and documentation comments
 - Learning Kotlin coroutines and asynchronous programming concepts
 
-Claude was employed for:
+Claude was used for:
 - Code review and optimization suggestions
 - Writing comprehensive documentation and README files
-- Designing database schema and relationships
-- Creating wireframe descriptions and UI component specifications
 - Generating test cases and validation logic
 - Providing architectural guidance for scalable Android applications
 

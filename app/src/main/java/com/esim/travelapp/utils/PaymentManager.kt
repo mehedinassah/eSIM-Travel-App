@@ -10,7 +10,7 @@ import com.esim.travelapp.BuildConfig
  */
 class PaymentManager(private val context: Context) {
 
-    // Initialize Stripe with your publishable key
+   
     // TODO: Replace with your actual Stripe publishable key from https://dashboard.stripe.com/apikeys
     private val stripe: Stripe = Stripe(
         context,
