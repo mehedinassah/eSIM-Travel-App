@@ -4,17 +4,17 @@
 
 Name: Mehedin Assah
 Student ID: [Student ID]
-Project: eSIM Travel App - Milestone 2
-Date: April 18, 2026
+Project: eSIM Travel App
+Date: April 26, 2026
 
 ------------------------------------------------------------
 1. AI TOOLS USED (check all that apply)
 ------------------------------------------------------------
-[X] None
+[ ] None
 [X] ChatGPT
 [X] GitHub Copilot
 [ ] Google Gemini
-[ ] Claude
+[X] Claude
 [ ] Cursor
 [ ] Other: ________________
 
@@ -39,11 +39,26 @@ GitHub Copilot was used as a coding assistant to:
 - Debug compilation errors related to Gradle, dependencies, and Java compatibility
 - Create UI layouts and fragments
 - Implement form validation and error handling
-- Generate localization strings for multiple languages (English, Spanish, French, German, Japanese, Chinese)
 - Design and implement the Settings and Edit Profile features
 - Set up multi-language locale switching with BaseActivity and LocaleManager
 
-All generated code was reviewed, tested, and modified to fit project requirements and architecture patterns.
+ChatGPT was utilized for:
+- Researching Android development best practices and architecture patterns
+- Understanding complex Android APIs (Location Services, Firebase, Stripe payments)
+- Planning application features and user flow design
+- Troubleshooting build issues and dependency conflicts
+- Generating code explanations and documentation comments
+- Learning Kotlin coroutines and asynchronous programming concepts
+
+Claude was employed for:
+- Code review and optimization suggestions
+- Writing comprehensive documentation and README files
+- Designing database schema and relationships
+- Creating wireframe descriptions and UI component specifications
+- Generating test cases and validation logic
+- Providing architectural guidance for scalable Android applications
+
+All generated code was reviewed, tested, and modified to fit project requirements and architecture patterns. AI tools were used to accelerate development while ensuring code quality through manual review and testing.
 
 ------------------------------------------------------------
 4. AI-ASSISTED SECTIONS
@@ -59,6 +74,23 @@ File: Repositories.kt | Section: Data access patterns and repository methods
 File: AppDatabase.kt | Section: Room database setup and seeding
 File: Multiple layout files | Section: Material Design UI components
 File: values-{language}/strings.xml | Section: Multi-language string resources for 6 languages
+File: build.gradle (app) | Section: Dependency management and build configuration
+File: build.gradle (project) | Section: Plugin setup and project configuration
+File: AndroidManifest.xml | Section: Permissions and activity declarations
+File: MainActivity.kt | Section: Navigation setup and fragment management
+File: DashboardActivity.kt | Section: UI state management and data binding
+File: ApiService.kt | Section: Retrofit API interface and endpoint definitions
+File: PaymentService.kt | Section: Stripe payment integration and tokenization
+File: LocationService.kt | Section: GPS location tracking and permissions
+File: FirebaseService.kt | Section: Authentication and data synchronization
+File: DataStoreManager.kt | Section: Preferences storage and retrieval
+File: WorkManagerSetup.kt | Section: Background task scheduling
+File: Navigation graph XML | Section: App navigation flow and fragment transitions
+File: Database entities | Section: Room entity definitions and relationships
+File: DAO interfaces | Section: Database access object methods
+File: Migration scripts | Section: Database schema updates
+File: ProGuard rules | Section: Code obfuscation configuration
+File: Firebase configuration | Section: google-services.json setup and initialization
 
 ------------------------------------------------------------
 5. DECLARATION
@@ -69,7 +101,7 @@ I declare that:
 - [X] I can explain and modify my work if asked
 - [X] I take full responsibility for my submission
 
-Signature: Mehedin Assah
-Date: April 18, 2026
+Signature: Mehedi Hassan
+Date: April 26, 2026
 
 ============================================================
